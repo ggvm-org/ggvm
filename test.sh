@@ -3,7 +3,7 @@
 exit_code() {
     expr=$1
     expected=$2
-    echo $expr | ../target/debug/ggvm > func_amd64.s
+    ../target/debug/ggvm $expr > func_amd64.s
     make && ./a.out
     code=$?
     if [ $code -eq $expected ] ; then
@@ -12,8 +12,9 @@ exit_code() {
         echo "[\e[31mFAILED!!\e[37m]exit code test failed, args=${expr} expected=${expected}, got=${code}"
         exit 1
     fi
-    rm -rf a.out
+    rm -rf a.out func_amd64.s
 }
 
 cd tests/
-exit_code "a" 22
+exit_code 2 22
+exit_code 22 42
