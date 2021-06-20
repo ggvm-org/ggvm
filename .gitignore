@@ -1,1 +1,8 @@
 /target
+
+tests/*.o
+tests/*.out
+tests/*.a
+tests/*.h
+tests/symabis
+tests/*.s
