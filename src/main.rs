@@ -1,4 +1,4 @@
-use std::{env, process::exit};
+use std::{env, ops::Deref, process::exit};
 
 trait Emit {
     fn emit(&self) -> String;
@@ -7,20 +7,24 @@ trait Emit {
 #[derive(Debug)]
 pub struct FunctionBlock {
     name: String,
-    block: Statements
+    block: Statements,
 }
 
 impl FunctionBlock {
     fn new(name: String, block: Statements) -> Self {
-        Self{name: name, block}
+        Self { name: name, block }
     }
 }
 
 impl Emit for FunctionBlock {
     fn emit(&self) -> String {
-        format!(r#"TEXT ·{name}(SB),$0
+        format!(
+            r#"TEXT ·{name}(SB),$0
 {block}
-"#, name=self.name, block=self.block.emit())
+"#,
+            name = self.name,
+            block = self.block.emit()
+        )
     }
 }
 
@@ -53,21 +57,23 @@ impl Emit for Statement {
     fn emit(&self) -> String {
         match self {
             Statement::Ret(n) => format!(
-r#"    MOVL ${n}, ret+0(FP)
+                r#"    MOVL ${n}, ret+0(FP)
     RET
-"#, n=n),
+"#,
+                n = n
+            ),
         }
     }
 }
 
 fn main() {
-    let input:Vec<_> = env::args().collect();
+    let input: Vec<_> = env::args().collect();
     if input.len() != 2 {
         eprintln!("usage: ggvm <expr>");
         exit(1)
     }
     let x = input[1].parse::<usize>().unwrap();
-    let ret_stmt  =Statement::Ret(x);
-    let add2  = FunctionBlock::new("add2".to_string(), Statements(vec![ret_stmt]));
+    let ret_stmt = Statement::Ret(x);
+    let add2 = FunctionBlock::new("add2".to_string(), Statements(vec![ret_stmt]));
     println!("{}", add2.emit());
 }
