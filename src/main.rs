@@ -27,9 +27,20 @@ impl Emit for FunctionBlock {
 #[derive(Debug)]
 pub struct Statements(Vec<Statement>);
 
+impl Deref for Statements {
+    type Target = Vec<Statement>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 impl Emit for Statements {
     fn emit(&self) -> String {
-        self.0.iter().map(|stmt| stmt.emit()).collect::<Vec<_>>().join("\n")
+        self.iter()
+            .map(|stmt| stmt.emit())
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 }
 
