@@ -12,9 +12,9 @@ exit_code() {
         echo "[\e[31mFAILED!!\e[37m]exit code test failed, args=${expr} expected=${expected}, got=${code}"
         exit 1
     fi
-    rm -rf a.out func_amd64.s
+    make nuke
 }
 
 cd tests/
-exit_code 2 22
-exit_code 22 42
+exit_code 42 42
+exit_code 2 2
