@@ -51,6 +51,7 @@ impl Emit for Statements {
 #[derive(Debug)]
 pub enum Statement {
     Ret(usize),
+    Assign { lhs: Register, rhs: Expr },
 }
 
 impl Emit for Statement {
@@ -62,6 +63,63 @@ impl Emit for Statement {
 "#,
                 n = n
             ),
+            Statement::Assign { lhs, rhs }
+                if lhs == &Register::AX && rhs.will_store_ax_register() =>
+            {
+                rhs.emit()
+            }
+            // Statement::Assign {lhs, rhs} => format!("")
+            _ => unimplemented!(),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Register {
+    AX,
+}
+
+impl Emit for Register {
+    fn emit(&self) -> String {
+        match self {
+            &Register::AX => "AX",
+        }
+        .into()
+    }
+}
+
+#[derive(Debug)]
+pub enum Expr {
+    Add(Box<Operand>, Box<Operand>),
+}
+
+impl Expr {
+    fn will_store_ax_register(&self) -> bool {
+        match self {
+            Expr::Add(_, _) => true,
+        }
+    }
+}
+
+impl Emit for Expr {
+    fn emit(&self) -> String {
+        match self {
+            Expr::Add(l, r) => format!("ADDL {} {}", l.emit(), r.emit()),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum Operand {
+    Register(Register),
+    Literal(usize),
+}
+
+impl Emit for Operand {
+    fn emit(&self) -> String {
+        match self {
+            Operand::Register(r) => r.emit(),
+            Operand::Literal(lit) => format!("${}", lit),
         }
     }
 }
@@ -74,6 +132,10 @@ fn main() {
     }
     let x = input[1].parse::<usize>().unwrap();
     let ret_stmt = Statement::Ret(x);
-    let add2 = FunctionBlock::new("add2".to_string(), Statements(vec![ret_stmt]));
+    // let add1 = Statement::Assign {
+    //     lhs: Register::AX,
+    //     rhs: Expr::Add(Operand::Register(Register::AX), )
+    // };
+    let add2 = FunctionBlock::new("add2".to_string(), Statements(vec![add1, ret_stmt]));
     println!("{}", add2.emit());
 }
