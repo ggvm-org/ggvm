@@ -16,5 +16,4 @@ exit_code() {
 }
 
 cd tests/
-exit_code 42 42
-exit_code 2 2
+exit_code 1 1
