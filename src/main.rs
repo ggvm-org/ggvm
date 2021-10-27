@@ -1,11 +1,11 @@
-use std::{collections::HashMap, hash::Hash};
+use std::collections::HashMap;
 
 // run {
 // let v: int = 1;
 // return v;
 // }
 
-//
+// TEXT は通常 2 つ引数を取り, 第１引数に名前, 第 2 引数にサイズを指定できます. 第 1 引数の 名前には CALL 命令などの対象として利用するシンボルを指定します.
 // TEXT main·run(SB), $0-16
 // MOVQ    $1, r0+16(SP)
 // MOVQ    r0+16, r0+8(SP)
@@ -42,7 +42,7 @@ impl AnalyzedFunctionBlock {
     }
 
     fn analyze(fb: &FunctionBlock) -> (usize, HashMap<String, usize>) {
-        let mut stack_size = 0;
+        let mut stack_size = 8;
         let mut var_to_align = HashMap::new();
         for stmt in fb.instructions.iter() {
             match stmt {
@@ -55,7 +55,36 @@ impl AnalyzedFunctionBlock {
         }
 
         // +8 is for BP
-        (stack_size + 8, var_to_align)
+        (stack_size, var_to_align)
+    }
+}
+
+impl AnalyzedFunctionBlock {
+    fn to_string(&self) -> String {
+        let text = format!("TEXT main·{}(SB), $0\n", self.fb.name);
+        let prologue = format!(
+            r#"SUBQ    ${}, SP
+MOVQ    BP, 8(SP)
+LEAQ    8(SP), BP
+"#,
+            self.stack_size
+        );
+
+        let code = self.emit_fb();
+
+        let epilogue = format!(
+            r#"MOVQ    8(SP), BP
+ADDQ    ${}, SP
+RET
+"#,
+            self.stack_size
+        );
+
+        format!("{}{}{}{}", text, prologue, code, epilogue)
+    }
+
+    fn emit_fb(&self) -> String {
+        format!("MOVQ    $1, {}(SP)\n", self.stack_size + 8)
     }
 }
 
@@ -79,39 +108,5 @@ fn main() {
             Statement::Return(Literal::Ident("v".to_string())),
         ],
     );
-    println!(
-        r#"
-TEXT main·run(SB), $0-16
-SUBQ    $16, SP
-MOVQ    BP, 8(SP)
-LEAQ    8(SP), BP
-MOVQ    $1, k(SP)
-MOVQ    $1, r0+24(SP)
-MOVQ    8(SP), BP
-ADDQ    $16, SP
-RET"#
-    );
-    // dbg!(AnalyzedFunctionBlock::new(run_block));
-
-    //     println!(
-    //         r#"
-    //         TEXT	main·run(SB), $16-0
-    // MOVQ	(TLS), CX
-    // CMPQ	SP, 16(CX)
-    // JLS	67
-    // SUBQ	$16, SP
-    // MOVQ	BP, 8(SP)
-    // LEAQ	8(SP), BP
-    // CALL	runtime.printlock(SB)
-    // MOVQ	$3, (SP)
-    // CALL	runtime.printint(SB)
-    // CALL	runtime.printnl(SB)
-    // CALL	runtime.printunlock(SB)
-    // MOVQ	8(SP), BP
-    // ADDQ	$16, SP
-    // RET
-    // NOP
-    // CALL	runtime.morestack_noctxt(SB)
-    // JMP	0"#
-    //     )
+    println!("{}", AnalyzedFunctionBlock::new(run_block).to_string());
 }
