@@ -11,6 +11,7 @@ use std::{collections::HashMap, hash::Hash};
 // MOVQ    r0+16, r0+8(SP)
 // RET
 
+#[derive(Debug, PartialEq)]
 struct FunctionBlock {
     name: String,
     instructions: Vec<Statement>,
@@ -22,6 +23,7 @@ impl FunctionBlock {
     }
 }
 
+#[derive(Debug, PartialEq)]
 struct AnalyzedFunctionBlock {
     fb: FunctionBlock,
     stack_size: usize,
@@ -41,9 +43,19 @@ impl AnalyzedFunctionBlock {
 
     fn analyze(fb: &FunctionBlock) -> (usize, HashMap<String, usize>) {
         let mut stack_size = 0;
+        let mut var_to_align = HashMap::new();
+        for stmt in fb.instructions.iter() {
+            match stmt {
+                Statement::Let(var_name, ..) => {
+                    var_to_align.insert(var_name.to_string(), stack_size);
+                    stack_size += 8;
+                }
+                _ => {}
+            }
+        }
 
-        let var_to_align = HashMap::new();
-        (stack_size, var_to_align)
+        // +8 is for BP
+        (stack_size + 8, var_to_align)
     }
 }
 
@@ -73,13 +85,13 @@ TEXT main·run(SB), $0-16
 SUBQ    $16, SP
 MOVQ    BP, 8(SP)
 LEAQ    8(SP), BP
-MOVQ    $0, r0+24(SP)
 MOVQ    $1, k(SP)
 MOVQ    $1, r0+24(SP)
 MOVQ    8(SP), BP
 ADDQ    $16, SP
 RET"#
     );
+    // dbg!(AnalyzedFunctionBlock::new(run_block));
 
     //     println!(
     //         r#"
