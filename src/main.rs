@@ -1,7 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
 // run {
-// v: int = 1;
+// let v: int = 1;
 // return v;
 // }
 
@@ -40,7 +40,8 @@ impl AnalyzedFunctionBlock {
     }
 
     fn analyze(fb: &FunctionBlock) -> (usize, HashMap<String, usize>) {
-        let stack_size = 0;
+        let mut stack_size = 0;
+
         let var_to_align = HashMap::new();
         (stack_size, var_to_align)
     }
@@ -48,7 +49,7 @@ impl AnalyzedFunctionBlock {
 
 #[derive(Debug, PartialEq)]
 enum Statement {
-    Assign(String, Literal),
+    Let(String, Literal),
     Return(Literal),
 }
 
@@ -62,7 +63,7 @@ fn main() {
     let run_block = FunctionBlock::new(
         "run".to_string(),
         vec![
-            Statement::Assign("v".to_string(), Literal::Integer(1)),
+            Statement::Let("v".to_string(), Literal::Integer(1)),
             Statement::Return(Literal::Ident("v".to_string())),
         ],
     );
