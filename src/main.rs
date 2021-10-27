@@ -1,3 +1,5 @@
+use std::{collections::HashMap, hash::Hash};
+
 // run {
 // v: int = 1;
 // return v;
@@ -17,6 +19,30 @@ struct FunctionBlock {
 impl FunctionBlock {
     fn new(name: String, instructions: Vec<Statement>) -> Self {
         FunctionBlock { name, instructions }
+    }
+}
+
+struct AnalyzedFunctionBlock {
+    fb: FunctionBlock,
+    stack_size: usize,
+    var_to_align: HashMap<String, usize>,
+}
+
+impl AnalyzedFunctionBlock {
+    fn new(fb: FunctionBlock) -> Self {
+        let (stack_size, var_to_align) = Self::analyze(&fb);
+
+        Self {
+            fb,
+            stack_size,
+            var_to_align,
+        }
+    }
+
+    fn analyze(fb: &FunctionBlock) -> (usize, HashMap<String, usize>) {
+        let stack_size = 0;
+        let var_to_align = HashMap::new();
+        (stack_size, var_to_align)
     }
 }
 
