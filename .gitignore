@@ -6,3 +6,5 @@ tests/*.a
 tests/*.h
 tests/symabis
 tests/*.s
+
+*.o
