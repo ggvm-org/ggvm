@@ -42,7 +42,7 @@ impl AnalyzedFunctionBlock {
     }
 
     fn analyze(fb: &FunctionBlock) -> (usize, HashMap<String, usize>) {
-        let mut stack_size = 8;
+        let mut stack_size = 0;
         let mut var_to_align = HashMap::new();
         for stmt in fb.instructions.iter() {
             match stmt {
@@ -55,7 +55,7 @@ impl AnalyzedFunctionBlock {
         }
 
         // +8 is for BP
-        (stack_size, var_to_align)
+        (stack_size + 8, var_to_align)
     }
 }
 
@@ -84,7 +84,12 @@ RET
     }
 
     fn emit_fb(&self) -> String {
-        format!("MOVQ    $1, {}(SP)\n", self.stack_size + 8)
+        self.fb
+            .instructions
+            .iter()
+            .fold(String::new(), |code, stmt| {
+                format!("{}{}", code, stmt.emit(self.stack_size, &self.var_to_align))
+            })
     }
 }
 
@@ -92,6 +97,45 @@ RET
 enum Statement {
     Let(String, Literal),
     Return(Literal),
+}
+
+impl Statement {
+    fn emit(&self, stack_size: usize, var_to_align: &HashMap<String, usize>) -> String {
+        match self {
+            Statement::Let(var_name, lit) => Self::emit_let(var_name, lit, var_to_align),
+            Statement::Return(lit) => match lit {
+                Literal::Integer(n) => format!("MOVQ ${} r0+{}(SP)\n", n, stack_size + 8),
+                Literal::Ident(i) => {
+                    let src_align = var_to_align.get(i).unwrap();
+                    format!(
+                        r#"MOVQ {}(SP), AX
+MOVQ AX, r0+{}(SP)
+"#,
+                        src_align,
+                        stack_size + 8
+                    )
+                }
+            },
+        }
+    }
+
+    fn emit_let(var_name: &str, lit: &Literal, var_to_align: &HashMap<String, usize>) -> String {
+        if let Some(align) = var_to_align.get(var_name) {
+            match lit {
+                Literal::Integer(n) => format!("MOVQ ${}, {}(SP)\n", n, align),
+                Literal::Ident(i) => {
+                    let src_align = var_to_align.get(i).unwrap();
+                    format!(
+                        r#"MOVQ {}(SP), AX
+MOVQ AX, {}(SP)"#,
+                        src_align, align
+                    )
+                }
+            }
+        } else {
+            unreachable!()
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -104,8 +148,9 @@ fn main() {
     let run_block = FunctionBlock::new(
         "run".to_string(),
         vec![
-            Statement::Let("v".to_string(), Literal::Integer(1)),
-            Statement::Return(Literal::Ident("v".to_string())),
+            Statement::Let("v".to_string(), Literal::Integer(200)),
+            Statement::Let("x".to_string(), Literal::Integer(100)),
+            Statement::Return(Literal::Ident("x".to_string())),
         ],
     );
     println!("{}", AnalyzedFunctionBlock::new(run_block).to_string());
