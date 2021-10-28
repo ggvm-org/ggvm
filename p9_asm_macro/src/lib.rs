@@ -1,5 +1,6 @@
 #[derive(Debug, PartialEq)]
 pub enum Instruction {
+    Text { package: String, name: String },
     Pushq(Operand),
     Popq(Operand),
     Movq(Expression),
@@ -15,6 +16,7 @@ impl std::fmt::Display for Instruction {
         match self {
             Pushq(operand) => write!(f, "PUSHQ {}\n", operand),
             Popq(operand) => write!(f, "POPQ {}\n", operand),
+            Text { package, name } => write!(f, "TEXT {}·{}(SB), $0", package, name),
             _ => todo!(),
         }
     }
@@ -62,6 +64,16 @@ macro_rules! popq {
     };
 }
 
+#[macro_export]
+macro_rules! text {
+    ($name:ident) => {
+        Text {
+            package: "main".to_string(),
+            name: stringify!($name).to_string(),
+        }
+    };
+}
+
 // movq!(BP, 8(SP))
 // movq!(n, ${align}(SP)\n", n, align)
 
@@ -95,5 +107,16 @@ mod tests {
     fn pushq() {
         assert_eq!(pushq!(AX), Pushq(AX));
         assert_eq!(pushq!(1), Pushq(Int(1)));
+    }
+
+    #[test]
+    fn text() {
+        assert_eq!(
+            text!(run),
+            Text {
+                package: "main".to_string(),
+                name: "run".to_string()
+            }
+        )
     }
 }
