@@ -95,8 +95,8 @@ RET
 
 #[derive(Debug, PartialEq)]
 enum Statement {
-    Let(String, Literal),
-    Return(Literal),
+    Let(String, Expression),
+    Return(Expression),
 }
 
 impl Statement {
@@ -104,8 +104,8 @@ impl Statement {
         match self {
             Statement::Let(var_name, lit) => Self::emit_let(var_name, lit, var_to_align),
             Statement::Return(lit) => match lit {
-                Literal::Integer(n) => format!("MOVQ ${} r0+{}(SP)\n", n, stack_size + 8),
-                Literal::Ident(i) => {
+                Expression::Integer(n) => format!("MOVQ ${} r0+{}(SP)\n", n, stack_size + 8),
+                Expression::Ident(i) => {
                     let src_align = var_to_align.get(i).unwrap();
                     format!(
                         r#"MOVQ {}(SP), AX
@@ -119,11 +119,11 @@ MOVQ AX, r0+{}(SP)
         }
     }
 
-    fn emit_let(var_name: &str, lit: &Literal, var_to_align: &HashMap<String, usize>) -> String {
+    fn emit_let(var_name: &str, lit: &Expression, var_to_align: &HashMap<String, usize>) -> String {
         if let Some(align) = var_to_align.get(var_name) {
             match lit {
-                Literal::Integer(n) => format!("MOVQ ${}, {}(SP)\n", n, align),
-                Literal::Ident(i) => {
+                Expression::Integer(n) => format!("MOVQ ${}, {}(SP)\n", n, align),
+                Expression::Ident(i) => {
                     let src_align = var_to_align.get(i).unwrap();
                     format!(
                         r#"MOVQ {}(SP), AX
@@ -139,7 +139,7 @@ MOVQ AX, {}(SP)"#,
 }
 
 #[derive(Debug, PartialEq)]
-enum Literal {
+enum Expression {
     Integer(i64),
     Ident(String),
 }
@@ -148,9 +148,9 @@ fn main() {
     let run_block = FunctionBlock::new(
         "run".to_string(),
         vec![
-            Statement::Let("v".to_string(), Literal::Integer(200)),
-            Statement::Let("x".to_string(), Literal::Integer(100)),
-            Statement::Return(Literal::Ident("x".to_string())),
+            Statement::Let("v".to_string(), Expression::Integer(200)),
+            Statement::Let("x".to_string(), Expression::Integer(100)),
+            Statement::Return(Expression::Ident("x".to_string())),
         ],
     );
     println!("{}", AnalyzedFunctionBlock::new(run_block).to_string());
