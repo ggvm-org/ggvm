@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "p9_asm_macro"
+name = "p9-asm"
 version = "0.1.0"

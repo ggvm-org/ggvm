@@ -6,3 +6,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+p9-asm = { path = "./p9_asm_macro" }
+
+[workspace]
+members =[
+    "p9_asm_macro"
+]

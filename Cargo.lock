@@ -5,3 +5,10 @@ version = 3
 [[package]]
 name = "ggvm"
 version = "0.1.0"
+dependencies = [
+ "p9-asm",
+]
+
+[[package]]
+name = "p9-asm"
+version = "0.1.0"
