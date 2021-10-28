@@ -4,12 +4,32 @@ pub enum Instruction {
     Popq(Operand),
 }
 
+impl std::fmt::Display for Instruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Pushq(operand) => write!(f, "PUSHQ {}", operand),
+            Popq(operand) => write!(f, "POPQ {}", operand),
+        }
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub enum Operand {
     AX,
     BX,
     SP,
     Int(i64),
+}
+
+impl std::fmt::Display for Operand {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AX => write!(f, "AX"),
+            BX => write!(f, "BX"),
+            SP => write!(f, "SP"),
+            Int(i) => write!(f, "{}", i),
+        }
+    }
 }
 
 use Instruction::*;
@@ -21,15 +41,23 @@ impl From<i64> for Operand {
     }
 }
 
+#[macro_export]
 macro_rules! pushq {
     ($operand:tt) => {
         Pushq(operand!($operand))
     };
 }
 
+#[macro_export]
+macro_rules! popq {
+    ($operand:tt) => {
+        Popq(operand!($operand))
+    };
+}
+
 macro_rules! operand {
     (AX) => {
-        Operand::AX
+        AX
     };
     ($expr:expr) => {
         Operand::from($expr)
@@ -39,7 +67,7 @@ macro_rules! operand {
 #[cfg(test)]
 mod tests {
     use crate::{
-        Instruction::{self, *},
+        Instruction::*,
         Operand::{self, *},
     };
 
