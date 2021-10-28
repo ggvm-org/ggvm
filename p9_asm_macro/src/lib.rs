@@ -2,13 +2,20 @@
 pub enum Instruction {
     Pushq(Operand),
     Popq(Operand),
+    Movq(Expression),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Expression {
+    Operand(Operand),
 }
 
 impl std::fmt::Display for Instruction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Pushq(operand) => write!(f, "PUSHQ {}", operand),
-            Popq(operand) => write!(f, "POPQ {}", operand),
+            Pushq(operand) => write!(f, "PUSHQ {}\n", operand),
+            Popq(operand) => write!(f, "POPQ {}\n", operand),
+            _ => todo!(),
         }
     }
 }
@@ -53,6 +60,13 @@ macro_rules! popq {
     ($operand:tt) => {
         Popq(operand!($operand))
     };
+}
+
+// movq!(BP, 8(SP))
+// movq!(n, ${align}(SP)\n", n, align)
+
+macro_rules! movq {
+    () => {};
 }
 
 macro_rules! operand {
