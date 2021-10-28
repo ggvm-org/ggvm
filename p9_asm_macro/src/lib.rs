@@ -67,10 +67,13 @@ macro_rules! popq {
 #[macro_export]
 macro_rules! text {
     ($name:ident) => {
-        Text {
-            package: "main".to_string(),
-            name: stringify!($name).to_string(),
-        }
+        format!(
+            "{}",
+            $crate::Instruction::Text {
+                package: "main".to_string(),
+                name: stringify!($name).to_string(),
+            }
+        )
     };
 }
 
@@ -113,10 +116,13 @@ mod tests {
     fn text() {
         assert_eq!(
             text!(run),
-            Text {
-                package: "main".to_string(),
-                name: "run".to_string()
-            }
+            format!(
+                "{}",
+                Text {
+                    package: "main".to_string(),
+                    name: "run".to_string()
+                }
+            )
         )
     }
 }

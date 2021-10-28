@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use p9_asm::text;
+
 // run {
 // let v: int = 1;
 // return v;
@@ -61,7 +63,7 @@ impl AnalyzedFunctionBlock {
 
 impl AnalyzedFunctionBlock {
     fn to_string(&self) -> String {
-        let text = format!("TEXT main·{}(SB), $0\n", self.fb.name);
+        let text = text!(run);
         let prologue = format!(
             r#"SUBQ    ${}, SP
 MOVQ    BP, 8(SP)
