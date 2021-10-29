@@ -16,7 +16,8 @@ impl std::fmt::Display for Instruction {
         match self {
             Pushq(operand) => write!(f, "PUSHQ {}\n", operand),
             Popq(operand) => write!(f, "POPQ {}\n", operand),
-            Text { package, name } => write!(f, "TEXT {}·{}(SB), $0", package, name),
+            // 4 means NOSPLIT
+            Text { package, name } => write!(f, "TEXT {}·{}(SB), 4, $0\n", package, name),
             _ => todo!(),
         }
     }
@@ -26,6 +27,7 @@ impl std::fmt::Display for Instruction {
 pub enum Operand {
     AX,
     BX,
+    BP,
     SP,
     Int(i64),
 }
@@ -35,8 +37,9 @@ impl std::fmt::Display for Operand {
         match self {
             AX => write!(f, "AX"),
             BX => write!(f, "BX"),
+            BP => write!(f, "BP"),
             SP => write!(f, "SP"),
-            Int(i) => write!(f, "{}", i),
+            Int(i) => write!(f, "${}", i),
         }
     }
 }
@@ -50,17 +53,23 @@ impl From<i64> for Operand {
     }
 }
 
+impl From<&i64> for Operand {
+    fn from(v: &i64) -> Self {
+        Operand::Int(*v)
+    }
+}
+
 #[macro_export]
 macro_rules! pushq {
     ($operand:tt) => {
-        Pushq(operand!($operand))
+        format!("{}", $crate::Instruction::Pushq($crate::operand!($operand)))
     };
 }
 
 #[macro_export]
 macro_rules! popq {
     ($operand:tt) => {
-        Popq(operand!($operand))
+        format!("{}", $crate::Instruction::Popq($crate::operand!($operand)))
     };
 }
 
@@ -84,12 +93,16 @@ macro_rules! movq {
     () => {};
 }
 
+#[macro_export]
 macro_rules! operand {
     (AX) => {
-        AX
+        $crate::Operand::AX
+    };
+    (BP) => {
+        $crate::Operand::BP
     };
     ($expr:expr) => {
-        Operand::from($expr)
+        $crate::Operand::from($expr)
     };
 }
 
