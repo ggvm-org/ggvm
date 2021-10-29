@@ -7,6 +7,7 @@ edition = "2018"
 
 [dependencies]
 p9-asm = { path = "./p9_asm_macro" }
+ggvm-position = { path ="./core/position" }
 
 [workspace]
 members =[
