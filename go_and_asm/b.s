@@ -1,0 +1,15 @@
+TEXT	main·run(SB), 4, $24-16
+SUBQ	$24, SP
+MOVQ	BP, 16(SP)
+LEAQ	16(SP), BP
+FUNCDATA	$0, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
+FUNCDATA	$1, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
+MOVQ	$0, r1+40(SP)
+MOVQ	$100, y+8(SP)
+MOVQ	x+32(SP), AX
+ADDQ	$100, AX
+MOVQ	AX, z(SP)
+MOVQ	AX, r1+40(SP)
+MOVQ	16(SP), BP
+ADDQ	$24, SP
+RET
