@@ -29,3 +29,12 @@ fn var_test() {
     assert_eq!(" rest", rest);
     assert_eq!("xyz", var_lit);
 }
+
+#[test]
+fn typ_test() {
+    let result = typ("int %x");
+    assert!(result.is_ok());
+    let (rest, typ_lit) = result.unwrap();
+    assert_eq!(" %x", rest);
+    assert_eq!("int", typ_lit);
+}
