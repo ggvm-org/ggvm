@@ -1,0 +1,4 @@
+func $add(%x int, %y int) int {
+    %z = add int %x, %y
+	ret int %z;
+}
