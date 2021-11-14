@@ -9,7 +9,7 @@ use nom::{
 };
 
 // func $add(%x int, %y int) int {
-//     %z = add int %x, %y
+//  local %z = add int %x, %y;
 // 	ret int %z;
 // }
 
@@ -27,6 +27,11 @@ enum Typ {
 enum Instruction<'a> {
     Add(Typ, Operand<'a>, Operand<'a>),
     Ret(Typ, Operand<'a>),
+}
+
+#[derive(Debug, PartialEq)]
+enum Statement<'a> {
+    Local(Operand<'a>, Instruction<'a>),
 }
 
 fn typ(input: &str) -> IResult<&str, Typ> {
@@ -62,6 +67,16 @@ fn ret_inst(input: &str) -> IResult<&str, Instruction> {
     let (input, typ) = typ(input)?;
     let (input, ret_val) = operand(input)?;
     Ok((input, Instruction::Ret(typ, ret_val)))
+}
+
+fn local_stmt(input: &str) -> IResult<&str, Statement> {
+    let (input, _) = tag("local")(input)?;
+    let (input, _) = sp(input)?;
+    let (input, opr) = map(var, Operand::Var)(input)?;
+    let (input, _) = char('=')(input)?;
+    let (input, _) = sp(input)?;
+    let (input, inst) = add_inst(input)?;
+    Ok((input, Statement::Local(opr, inst)))
 }
 
 #[test]
@@ -101,4 +116,14 @@ fn ret_inst_test() {
     let (rest, ret_inst) = result.unwrap();
     assert_eq!("", rest);
     assert_eq!(Instruction::Ret(Typ::Int, Operand::Var("x")), ret_inst);
+}
+
+#[test]
+fn local_stmt_test() {
+    let result = local_stmt("local %z = add int %x, %y");
+    assert!(result.is_ok());
+    let (rest, loc) = result.unwrap();
+    let add_inst = Instruction::Add(Typ::Int, Operand::Var("x"), Operand::Var("y"));
+    assert_eq!("", rest);
+    assert_eq!(loc, Statement::Local(Operand::Var("z"), add_inst));
 }
