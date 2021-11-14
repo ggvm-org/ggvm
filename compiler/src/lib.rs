@@ -1,4 +1,5 @@
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     character::complete::alpha1,
     character::complete::char,
@@ -32,6 +33,7 @@ enum Instruction<'a> {
 #[derive(Debug, PartialEq)]
 enum Statement<'a> {
     Local(Operand<'a>, Instruction<'a>),
+    Inst(Instruction<'a>),
 }
 
 fn typ(input: &str) -> IResult<&str, Typ> {
@@ -79,6 +81,14 @@ fn local_stmt(input: &str) -> IResult<&str, Statement> {
     Ok((input, Statement::Local(opr, inst)))
 }
 
+fn inst(input: &str) -> IResult<&str, Instruction> {
+    alt((add_inst, ret_inst))(input)
+}
+
+fn inst_stmt(input: &str) -> IResult<&str, Statement> {
+    map(inst, Statement::Inst)(input)
+}
+
 #[test]
 fn var_test() {
     let result = var("%xyz rest");
@@ -116,6 +126,40 @@ fn ret_inst_test() {
     let (rest, ret_inst) = result.unwrap();
     assert_eq!("", rest);
     assert_eq!(Instruction::Ret(Typ::Int, Operand::Var("x")), ret_inst);
+}
+
+#[test]
+fn inst_test() {
+    let result = inst("add int %x, %y");
+    assert!(result.is_ok());
+    let (rest, add_inst) = result.unwrap();
+    assert_eq!("", rest);
+    assert_eq!(
+        Instruction::Add(Typ::Int, Operand::Var("x"), Operand::Var("y")),
+        add_inst
+    );
+
+    let result = inst("ret int %x");
+    assert!(result.is_ok());
+    let (rest, ret_inst) = result.unwrap();
+    assert_eq!("", rest);
+    assert_eq!(Instruction::Ret(Typ::Int, Operand::Var("x")), ret_inst);
+}
+
+#[test]
+fn inst_stmt_test() {
+    let result = inst_stmt("add int %x, %y");
+    assert!(result.is_ok());
+    let (rest, add_inst_stmt) = result.unwrap();
+    assert_eq!("", rest);
+    assert_eq!(
+        Statement::Inst(Instruction::Add(
+            Typ::Int,
+            Operand::Var("x"),
+            Operand::Var("y")
+        ),),
+        add_inst_stmt
+    );
 }
 
 #[test]
