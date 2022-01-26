@@ -5,10 +5,11 @@ TARG=a.out
 all: $(TARG)
 
 $(TARG): main.a
-	go tool link main.a
+	go tool link main.a 
 
 main.a: main.o func_amd64.o
 	go tool pack c $@ $^
+	go tool pack r /Users/krouton/.goenv/versions/1.15.8/pkg/darwin_amd64/encoding/hex.a $@
 
 main.o: main.go symabis
 	go tool compile -symabis symabis -p $(PKG) $<
@@ -30,4 +31,4 @@ clean:
 
 .PHONY: nuke
 nuke:
-	rm -f *.o *.a *.s $(TARG) symabis go_asm.h
+	rm -f *.o *.a $(TARG) symabis go_asm.h
