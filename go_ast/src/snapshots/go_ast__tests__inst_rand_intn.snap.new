@@ -1,0 +1,7 @@
+---
+source: go_ast/src/lib.rs
+assertion_line: 50
+expression: func
+
+---
+func randIntn(x int) int{ return rand.Intn(x) }

@@ -8,8 +8,13 @@ edition = "2018"
 [dependencies]
 p9-asm = { path = "./p9_asm_macro" }
 compiler = { path ="./compiler" }
+go_ast = {path = "./go_ast"}
 
 [workspace]
 members =[
-    "p9_asm_macro"
+    "p9_asm_macro",
+    "go_ast"
 ]
+
+[dev-dependencies]
+insta = "1.12.0"
