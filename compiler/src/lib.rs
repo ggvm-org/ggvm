@@ -9,29 +9,31 @@ use nom::{
     IResult,
 };
 
+mod codegen;
+
 // func $add(%x int, %y int) int {
 //  local %z = add int %x, %y;
 // 	ret int %z;
 // }
 
 #[derive(Debug, PartialEq)]
-enum Operand<'a> {
+pub enum Operand<'a> {
     Var(&'a str),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-enum Typ {
+pub enum Typ {
     Int,
 }
 
 #[derive(Debug, PartialEq)]
-enum Instruction<'a> {
+pub(crate) enum Instruction<'a> {
     Add(Typ, Operand<'a>, Operand<'a>),
     Ret(Typ, Operand<'a>),
 }
 
 #[derive(Debug, PartialEq)]
-enum Statement<'a> {
+pub(crate) enum Statement<'a> {
     Local(Operand<'a>, Instruction<'a>),
     Inst(Instruction<'a>),
 }
