@@ -1,5 +1,24 @@
 use std::fmt;
 
+pub struct Package(String);
+
+impl Package {
+    fn new(s: String) -> Self {
+        Self(s)
+    }
+
+    fn new_main() -> Self {
+        Self::new("main".to_string())
+    }
+}
+
+impl fmt::Display for Package {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let package_name = &self.0;
+        write!(f, "package {package_name}")
+    }
+}
+
 pub struct Func {
     name: String,
     ret_type: Type,
@@ -48,5 +67,11 @@ mod tests {
     fn insta_rand_intn() {
         let func = Func::new("randIntn".to_string(), Type::Int, "rand.Intn");
         assert_display_snapshot!(func);
+    }
+
+    #[test]
+    fn insta_package() {
+        let package = Package::new_main();
+        assert_display_snapshot!(package);
     }
 }
