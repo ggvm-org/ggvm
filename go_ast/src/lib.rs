@@ -1,6 +1,7 @@
 use std::fmt;
 
 pub struct Package(String);
+pub struct Import(String);
 
 impl Package {
     fn new(s: String) -> Self {
@@ -16,6 +17,23 @@ impl fmt::Display for Package {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let package_name = &self.0;
         write!(f, "package {package_name}")
+    }
+}
+
+impl Import {
+    fn new(s: String) -> Self {
+        Self(s)
+    }
+
+    fn math_rand() -> Self {
+        Self::new("math/rand".to_string())
+    }
+}
+
+impl fmt::Display for Import {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let import_path = &self.0;
+        write!(f, "import \"{import_path}\"")
     }
 }
 
@@ -48,12 +66,14 @@ pub struct Arg(String, Type);
 
 pub enum Type {
     Int,
+    Unit,
 }
 
 impl fmt::Display for Type {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
             Self::Int => "int",
+            Self::Unit => "",
         };
         write!(f, "{s}")
     }
