@@ -9,6 +9,7 @@ use nom::{
     IResult,
 };
 
+mod analyze;
 mod codegen;
 
 // func $add(%x int, %y int) int {
