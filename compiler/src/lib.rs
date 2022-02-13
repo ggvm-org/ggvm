@@ -17,6 +17,26 @@ mod codegen;
 // 	ret int %z;
 // }
 
+pub(crate) struct Func<'a> {
+    name: String,
+    args: Arg,
+    ret_type: usize,
+    stmts: Vec<Statement<'a>>,
+}
+
+pub(crate) struct Arg(String, Typ);
+
+impl<'a> Func<'a> {
+    pub fn new(name: String, args: Arg, ret_type: usize, stmts: Vec<Statement<'a>>) -> Self {
+        Self {
+            name,
+            args,
+            ret_type,
+            stmts,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub enum Operand<'a> {
     Var(&'a str),
