@@ -16,8 +16,6 @@ pub(crate) struct AnalyzeResult<'a> {
     env: Environment<'a>,
 }
 
-impl From<
-
 impl Environment<'_> {
     fn new() -> Self {
         Self(HashMap::new())
