@@ -37,7 +37,7 @@ impl fmt::Display for Import {
     }
 }
 
-pub struct Func {
+pub(crate) struct Func {
     name: String,
     ret_type: Type,
     wrap: &'static str,

@@ -21,7 +21,7 @@ pub(crate) struct Func<'a> {
     name: String,
     args: Arg,
     ret_type: usize,
-    stmts: Vec<Statement<'a>>,
+    pub(crate) stmts: Vec<Statement<'a>>,
 }
 
 pub(crate) struct Arg(String, Typ);
@@ -37,7 +37,7 @@ impl<'a> Func<'a> {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Hash, Eq)]
 pub enum Operand<'a> {
     Var(&'a str),
 }
