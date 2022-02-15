@@ -1,11 +1,25 @@
 use std::ops::{Deref, DerefMut};
 
+use crate::Operand;
+
 #[derive(Debug, PartialEq)]
 pub(crate) enum GoAssemblyKind {
     Text { package: String, name: String },
-    // Pushq(Operand),
-    // Popq(Operand),
-    // Movq(Expression),
+    Subq(Operand, Operand),
+    Leaq(Operand, Operand),
+    Movq(Operand, Operand),
+    Call(Operand),
+    Addq(Operand, Operand),
+}
+
+impl ToString for GoAssemblyKind {
+    fn to_string(&self) -> String {
+        match self {
+            Self::Text { package, name } => unimplemented!(),
+            Self::Subq(left, right) => unimplemented!(),
+            _ => unimplemented!(),
+        }
+    }
 }
 
 pub(crate) struct GoAssembly(pub(crate) Vec<GoAssemblyKind>);
