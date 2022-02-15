@@ -17,17 +17,17 @@ mod codegen;
 // 	ret int %z;
 // }
 
-pub(crate) struct Func<'a> {
+pub(crate) struct Func {
     name: String,
     args: Arg,
     ret_type: usize,
-    pub(crate) stmts: Vec<Statement<'a>>,
+    pub(crate) stmts: Vec<Statement>,
 }
 
 pub(crate) struct Arg(String, Typ);
 
-impl<'a> Func<'a> {
-    pub fn new(name: String, args: Arg, ret_type: usize, stmts: Vec<Statement<'a>>) -> Self {
+impl Func {
+    pub fn new(name: String, args: Arg, ret_type: usize, stmts: Vec<Statement>) -> Self {
         Self {
             name,
             args,
@@ -38,8 +38,8 @@ impl<'a> Func<'a> {
 }
 
 #[derive(Debug, PartialEq, Hash, Eq)]
-pub enum Operand<'a> {
-    Var(&'a str),
+pub enum Operand {
+    Var(String),
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -48,15 +48,15 @@ pub enum Typ {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) enum Instruction<'a> {
-    Add(Typ, Operand<'a>, Operand<'a>),
-    Ret(Typ, Operand<'a>),
+pub(crate) enum Instruction {
+    Add(Typ, Operand, Operand),
+    Ret(Typ, Operand),
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) enum Statement<'a> {
-    Local(Operand<'a>, Instruction<'a>),
-    Inst(Instruction<'a>),
+pub(crate) enum Statement {
+    Local(Operand, Instruction),
+    Inst(Instruction),
 }
 
 fn typ(input: &str) -> IResult<&str, Typ> {
@@ -66,7 +66,7 @@ fn typ(input: &str) -> IResult<&str, Typ> {
 }
 
 fn operand(input: &str) -> IResult<&str, Operand> {
-    map(var, Operand::Var)(input)
+    map(var, |op| Operand::Var(op.to_string()))(input)
 }
 
 fn var(input: &str) -> IResult<&str, &str> {
@@ -97,7 +97,7 @@ fn ret_inst(input: &str) -> IResult<&str, Instruction> {
 fn local_stmt(input: &str) -> IResult<&str, Statement> {
     let (input, _) = tag("local")(input)?;
     let (input, _) = sp(input)?;
-    let (input, opr) = map(var, Operand::Var)(input)?;
+    let (input, opr) = map(var, |op| Operand::Var(op.to_string()))(input)?;
     let (input, _) = char('=')(input)?;
     let (input, _) = sp(input)?;
     let (input, inst) = add_inst(input)?;
@@ -137,7 +137,11 @@ fn add_inst_test() {
     let (rest, add_inst) = result.unwrap();
     assert_eq!("", rest);
     assert_eq!(
-        Instruction::Add(Typ::Int, Operand::Var("x"), Operand::Var("y")),
+        Instruction::Add(
+            Typ::Int,
+            Operand::Var("x".to_string()),
+            Operand::Var("y".to_string())
+        ),
         add_inst
     );
 }
@@ -148,7 +152,10 @@ fn ret_inst_test() {
     assert!(result.is_ok());
     let (rest, ret_inst) = result.unwrap();
     assert_eq!("", rest);
-    assert_eq!(Instruction::Ret(Typ::Int, Operand::Var("x")), ret_inst);
+    assert_eq!(
+        Instruction::Ret(Typ::Int, Operand::Var("x".to_string())),
+        ret_inst
+    );
 }
 
 #[test]
@@ -158,7 +165,11 @@ fn inst_test() {
     let (rest, add_inst) = result.unwrap();
     assert_eq!("", rest);
     assert_eq!(
-        Instruction::Add(Typ::Int, Operand::Var("x"), Operand::Var("y")),
+        Instruction::Add(
+            Typ::Int,
+            Operand::Var("x".to_string()),
+            Operand::Var("y".to_string())
+        ),
         add_inst
     );
 
@@ -166,7 +177,10 @@ fn inst_test() {
     assert!(result.is_ok());
     let (rest, ret_inst) = result.unwrap();
     assert_eq!("", rest);
-    assert_eq!(Instruction::Ret(Typ::Int, Operand::Var("x")), ret_inst);
+    assert_eq!(
+        Instruction::Ret(Typ::Int, Operand::Var("x".to_string())),
+        ret_inst
+    );
 }
 
 #[test]
@@ -178,8 +192,8 @@ fn inst_stmt_test() {
     assert_eq!(
         Statement::Inst(Instruction::Add(
             Typ::Int,
-            Operand::Var("x"),
-            Operand::Var("y")
+            Operand::Var("x".to_string()),
+            Operand::Var("y".to_string())
         ),),
         add_inst_stmt
     );
@@ -190,7 +204,14 @@ fn local_stmt_test() {
     let result = local_stmt("local %z = add int %x, %y");
     assert!(result.is_ok());
     let (rest, loc) = result.unwrap();
-    let add_inst = Instruction::Add(Typ::Int, Operand::Var("x"), Operand::Var("y"));
+    let add_inst = Instruction::Add(
+        Typ::Int,
+        Operand::Var("x".to_string()),
+        Operand::Var("y".to_string()),
+    );
     assert_eq!("", rest);
-    assert_eq!(loc, Statement::Local(Operand::Var("z"), add_inst));
+    assert_eq!(
+        loc,
+        Statement::Local(Operand::Var("z".to_string()), add_inst)
+    );
 }

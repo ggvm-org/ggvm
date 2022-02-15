@@ -1,16 +1,23 @@
 use std::{
     collections::{HashMap, HashSet},
-    ops::Deref,
+    ops::{Deref, DerefMut},
 };
 
 use crate::{Func, Instruction, Operand, Statement};
 
-pub(crate) struct Environment<'a>(HashMap<Operand<'a>, usize>);
+pub(crate) struct Environment(HashMap<Operand, usize>);
 
-impl<'a> Deref for Environment<'a> {
-    type Target = HashMap<Operand<'a>, usize>;
+impl Deref for Environment {
+    type Target = HashMap<Operand, usize>;
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl DerefMut for Environment {
+    // type Target = HashMap<Operand, usize>;
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 
@@ -21,18 +28,24 @@ impl<'a> Deref for Environment<'a> {
 
 // ((add ))
 
-pub(crate) struct AnalyzeResult<'a> {
+pub(crate) struct AnalyzeResult {
     stacksize: usize,
-    env: Environment<'a>,
+    // TODO: Add offset
+    env: Environment,
+    func: Func,
 }
 
-impl<'a> AnalyzeResult<'a> {
-    fn new(stacksize: usize, env: Environment<'a>) -> Self {
-        Self { stacksize, env }
+impl AnalyzeResult {
+    fn new(stacksize: usize, env: Environment, func: Func) -> Self {
+        Self {
+            stacksize,
+            env,
+            func,
+        }
     }
 }
 
-pub(crate) fn analyze<'a, 'b>(func: &'a Func) -> AnalyzeResult<'b> {
+pub(crate) fn analyze(func: Func) -> AnalyzeResult {
     let stacksize = 10000;
     // x -> 4
     // y -> 8,
@@ -40,7 +53,7 @@ pub(crate) fn analyze<'a, 'b>(func: &'a Func) -> AnalyzeResult<'b> {
     let mut env = Environment::new();
 
     // returns the set of idents
-    let mut offset = func.stmts.iter().fold(0, |mut offset, stmt| {
+    let offset = func.stmts.iter().fold(0, |mut offset, stmt| {
         let v = analyze_stmt(stmt);
         v.into_iter().for_each(|ident_str| {
             if !env.contains_key(&ident_str) {
@@ -51,21 +64,25 @@ pub(crate) fn analyze<'a, 'b>(func: &'a Func) -> AnalyzeResult<'b> {
         offset
     });
 
-    AnalyzeResult { stacksize, env }
+    AnalyzeResult {
+        stacksize,
+        env,
+        func,
+    }
 }
 
-pub(crate) fn analyze_stmt(stmt: &Statement) -> HashSet<String> {
+pub(crate) fn analyze_stmt(stmt: &Statement) -> HashSet<Operand> {
     let mut h = HashSet::new();
-    match stmt {
+    match &stmt {
         &Statement::Local(op, b) => h.extend(analyze_operand(&op)),
         &Statement::Inst(inst) => h.extend(analyze_inst(&inst)),
     };
     h
 }
 
-pub(crate) fn analyze_inst(inst: &Instruction) -> HashSet<String> {
+pub(crate) fn analyze_inst(inst: &Instruction) -> HashSet<Operand> {
     let mut h = HashSet::new();
-    match inst {
+    match &inst {
         &Instruction::Add(_, left, right) => {
             h.extend(analyze_operand(&left));
             h.extend(analyze_operand(&right));
@@ -75,15 +92,15 @@ pub(crate) fn analyze_inst(inst: &Instruction) -> HashSet<String> {
     h
 }
 
-pub(crate) fn analyze_operand(op: &Operand) -> HashSet<String> {
+pub(crate) fn analyze_operand(op: &Operand) -> HashSet<Operand> {
     let mut h = HashSet::new();
-    match op {
-        &Operand::Var(s) => h.insert(s.to_string()),
+    match &op {
+        &Operand::Var(s) => h.insert(Operand::Var(s.to_string())),
     };
     h
 }
 
-impl Environment<'_> {
+impl Environment {
     fn new() -> Self {
         Self(HashMap::new())
     }
