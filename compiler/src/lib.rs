@@ -11,6 +11,7 @@ use nom::{
 
 mod analyze;
 mod codegen;
+mod go_assembly;
 
 // func $add(%x int, %y int) int {
 //  local %z = add int %x, %y;
