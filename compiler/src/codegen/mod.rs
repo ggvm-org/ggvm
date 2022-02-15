@@ -24,5 +24,6 @@ pub(crate) fn compile_inst(inst: Instruction) -> GoAssembly {
     match inst {
         Instruction::Add(typ, a, b) => unimplemented!(),
         Instruction::Ret(typ, a) => unimplemented!(),
+        Instruction::Call(op) => unimplemented!(),
     }
 }

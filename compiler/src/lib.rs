@@ -52,6 +52,7 @@ pub enum Typ {
 pub(crate) enum Instruction {
     Add(Typ, Operand, Operand),
     Ret(Typ, Operand),
+    Call(Operand),
 }
 
 #[derive(Debug, PartialEq)]
@@ -85,6 +86,13 @@ fn add_inst(input: &str) -> IResult<&str, Instruction> {
     let (input, _) = sp(input)?;
     let (input, right_op) = operand(input)?;
     Ok((input, Instruction::Add(typ, left_op, right_op)))
+}
+
+fn call_inst(input: &str) -> IResult<&str, Instruction> {
+    let (input, _) = tag("call")(input)?;
+    let (input, _) = sp(input)?;
+    let (input, op) = operand(input)?;
+    Ok((input, Instruction::Call(op)))
 }
 
 fn ret_inst(input: &str) -> IResult<&str, Instruction> {
@@ -215,4 +223,13 @@ fn local_stmt_test() {
         loc,
         Statement::Local(Operand::Var("z".to_string()), add_inst)
     );
+}
+
+#[test]
+fn call_inst_test() {
+    let result = call_inst("call %x");
+    assert!(result.is_ok());
+    let (rest, add_inst) = result.unwrap();
+    assert_eq!("", rest);
+    assert_eq!(Instruction::Call(Operand::Var("x".to_string()),), add_inst);
 }

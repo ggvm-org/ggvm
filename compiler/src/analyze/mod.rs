@@ -88,6 +88,7 @@ pub(crate) fn analyze_inst(inst: &Instruction) -> HashSet<Operand> {
             h.extend(analyze_operand(&right));
         }
         &Instruction::Ret(typ, op) => h.extend(analyze_operand(&op)),
+        &Instruction::Call(op) => h.extend(analyze_operand(&op)),
     }
     h
 }
