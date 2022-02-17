@@ -18,17 +18,19 @@ mod go_assembly;
 // 	ret int %z;
 // }
 
+#[derive(Debug)]
 pub(crate) struct Func {
     name: String,
-    args: Arg,
-    ret_type: usize,
+    args: Vec<Arg>,
+    ret_type: Typ,
     pub(crate) stmts: Vec<Statement>,
 }
 
+#[derive(Debug)]
 pub(crate) struct Arg(String, Typ);
 
 impl Func {
-    pub fn new(name: String, args: Arg, ret_type: usize, stmts: Vec<Statement>) -> Self {
+    pub fn new(name: String, args: Vec<Arg>, ret_type: Typ, stmts: Vec<Statement>) -> Self {
         Self {
             name,
             args,
@@ -59,6 +61,32 @@ pub(crate) enum Instruction {
 pub(crate) enum Statement {
     Local(Operand, Instruction),
     Inst(Instruction),
+}
+
+// func x() <type> { <stmts> };
+pub(crate) fn func(input: &str) -> IResult<&str, Func> {
+    let (input, _) = tag("func")(input)?;
+    let (input, _) = sp(input)?;
+    let (input, (_, func_name)) = tuple((char('$'), alpha1))(input)?;
+    let (input, _) = sp(input)?;
+    // TODO: multiple args
+    let (input, _) = tag("()")(input)?;
+    let (input, _) = sp(input)?;
+    let (input, ret_type) = typ(input)?;
+    let (input, _) = sp(input)?;
+    let (input, _) = tag("{")(input)?;
+    let (input, _) = sp(input)?;
+
+    // TODO: multiple statements
+    let (input, stmt) = stmt(input)?;
+    let (input, _) = sp(input)?;
+
+    let (input, _) = tag("}")(input)?;
+    let args = vec![];
+    Ok((
+        input,
+        Func::new(func_name.to_string(), args, ret_type, vec![stmt]),
+    ))
 }
 
 fn typ(input: &str) -> IResult<&str, Typ> {
@@ -113,8 +141,12 @@ fn local_stmt(input: &str) -> IResult<&str, Statement> {
     Ok((input, Statement::Local(opr, inst)))
 }
 
+fn stmt(input: &str) -> IResult<&str, Statement> {
+    alt((local_stmt, inst_stmt))(input)
+}
+
 fn inst(input: &str) -> IResult<&str, Instruction> {
-    alt((add_inst, ret_inst))(input)
+    alt((add_inst, ret_inst, call_inst))(input)
 }
 
 fn inst_stmt(input: &str) -> IResult<&str, Statement> {
@@ -232,4 +264,11 @@ fn call_inst_test() {
     let (rest, add_inst) = result.unwrap();
     assert_eq!("", rest);
     assert_eq!(Instruction::Call(Operand::Var("x".to_string()),), add_inst);
+}
+
+#[test]
+fn func_test() {
+    let input = "func $x() int { call %x }";
+    let result = func(input);
+    assert!(result.is_ok());
 }
