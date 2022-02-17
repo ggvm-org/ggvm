@@ -19,7 +19,8 @@ mod go_assembly;
 // }
 
 #[derive(Debug)]
-pub(crate) struct Func {
+// TODO: add pub(crate)...
+pub struct Func {
     name: String,
     args: Vec<Arg>,
     ret_type: Typ,
@@ -30,7 +31,7 @@ pub(crate) struct Func {
 pub(crate) struct Arg(String, Typ);
 
 impl Func {
-    pub fn new(name: String, args: Vec<Arg>, ret_type: Typ, stmts: Vec<Statement>) -> Self {
+    fn new(name: String, args: Vec<Arg>, ret_type: Typ, stmts: Vec<Statement>) -> Self {
         Self {
             name,
             args,
@@ -61,6 +62,10 @@ pub(crate) enum Instruction {
 pub(crate) enum Statement {
     Local(Operand, Instruction),
     Inst(Instruction),
+}
+
+pub fn parse() -> impl FnOnce(&str) -> IResult<&str, Func> {
+    func
 }
 
 // func x() <type> { <stmts> };
