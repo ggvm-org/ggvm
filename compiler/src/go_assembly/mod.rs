@@ -5,30 +5,36 @@ use crate::Operand;
 #[derive(Debug, PartialEq)]
 pub(crate) enum GoAssemblyKind {
     Text { package: String, name: String },
-    Subq(Operand, Operand),
-    Leaq(Operand, Operand),
-    Movq(Operand, Operand),
-    Call(Operand),
-    Addq(Operand, Operand),
+    Subq(AsmOperand, AsmOperand),
+    Leaq(AsmOperand, AsmOperand),
+    Movq(AsmOperand, AsmOperand),
+    Call(AsmOperand),
+    Addq(AsmOperand, AsmOperand),
 }
 
 #[derive(Debug, PartialEq)]
 pub(crate) enum AsmOperand {
+    Ident(String),
+    Int(usize),
     RegisterWithOffset(RegisterWithOffset),
+    Register(Register),
 }
 
 impl ToString for AsmOperand {
     fn to_string(&self) -> String {
         match self {
+            AsmOperand::Ident(s) => s.clone(),
+            AsmOperand::Int(n) => format!("${n}"),
             AsmOperand::RegisterWithOffset(inner) => inner.to_string(),
+            AsmOperand::Register(register) => register.to_string(),
         }
     }
 }
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct RegisterWithOffset {
-    offset: usize,
-    register: Register,
+    pub(crate) offset: usize,
+    pub(crate) register: Register,
 }
 
 impl ToString for RegisterWithOffset {
@@ -68,6 +74,7 @@ impl ToString for GoAssemblyKind {
         match self {
             Self::Text { package, name } => unimplemented!(),
             Self::Subq(left, right) => unimplemented!(),
+            Self::Call(AsmOperand::Ident(ident)) => format!("CALL    main.{ident}(SB)"),
             _ => unimplemented!(),
         }
     }

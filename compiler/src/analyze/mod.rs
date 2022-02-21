@@ -29,10 +29,10 @@ impl DerefMut for Environment {
 // ((add ))
 
 pub(crate) struct AnalyzeResult {
-    stacksize: usize,
+    pub(crate) stacksize: usize,
     // TODO: Add offset
-    env: Environment,
-    func: Func,
+    pub(crate) env: Environment,
+    pub(crate) func: Func,
 }
 
 impl AnalyzeResult {
