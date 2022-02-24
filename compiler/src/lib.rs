@@ -69,6 +69,7 @@ pub fn parse() -> impl FnOnce(&str) -> IResult<&str, Func> {
 }
 
 pub use analyze::analyze;
+pub use codegen::compile;
 
 // func x() <type> { <stmts> };
 pub(crate) fn func(input: &str) -> IResult<&str, Func> {

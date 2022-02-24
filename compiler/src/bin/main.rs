@@ -19,4 +19,7 @@ fn main() {
     let (_rest, func) = result.unwrap();
     let analyze_result = compiler::analyze(func);
     dbg!(&analyze_result);
+    let compile = compiler::compile();
+    let go_asm = compile(analyze_result);
+    dbg!(go_asm);
 }

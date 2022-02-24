@@ -3,17 +3,18 @@ use std::ops::{Deref, DerefMut};
 use crate::Operand;
 
 #[derive(Debug, PartialEq)]
-pub(crate) enum GoAssemblyKind {
+pub enum GoAssemblyKind {
     Text { package: String, name: String },
     Subq(AsmOperand, AsmOperand),
     Leaq(AsmOperand, AsmOperand),
     Movq(AsmOperand, AsmOperand),
     Call(AsmOperand),
     Addq(AsmOperand, AsmOperand),
+    Ret,
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) enum AsmOperand {
+pub enum AsmOperand {
     Ident(String),
     Int(usize),
     RegisterWithOffset(RegisterWithOffset),
@@ -32,7 +33,7 @@ impl ToString for AsmOperand {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct RegisterWithOffset {
+pub struct RegisterWithOffset {
     pub(crate) offset: usize,
     pub(crate) register: Register,
 }
@@ -50,7 +51,7 @@ impl ToString for RegisterWithOffset {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub(crate) enum Register {
+pub enum Register {
     AX,
     CX,
     SP,
@@ -80,7 +81,8 @@ impl ToString for GoAssemblyKind {
     }
 }
 
-pub(crate) struct GoAssembly(pub(crate) Vec<GoAssemblyKind>);
+#[derive(Debug)]
+pub struct GoAssembly(pub(crate) Vec<GoAssemblyKind>);
 
 impl Deref for GoAssembly {
     type Target = Vec<GoAssemblyKind>;
