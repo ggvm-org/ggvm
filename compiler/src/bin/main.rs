@@ -16,4 +16,7 @@ fn main() {
     let parse = compiler::parse();
     let result = parse(&input);
     assert!(result.is_ok());
+    let (_rest, func) = result.unwrap();
+    let analyze_result = compiler::analyze(func);
+    dbg!(&analyze_result);
 }

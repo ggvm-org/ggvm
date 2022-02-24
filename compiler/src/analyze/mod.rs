@@ -5,6 +5,7 @@ use std::{
 
 use crate::{Func, Instruction, Operand, Statement};
 
+#[derive(Debug)]
 pub(crate) struct Environment(HashMap<Operand, usize>);
 
 impl Deref for Environment {
@@ -28,7 +29,8 @@ impl DerefMut for Environment {
 
 // ((add ))
 
-pub(crate) struct AnalyzeResult {
+#[derive(Debug)]
+pub struct AnalyzeResult {
     pub(crate) stacksize: usize,
     // TODO: Add offset
     pub(crate) env: Environment,
@@ -45,7 +47,7 @@ impl AnalyzeResult {
     }
 }
 
-pub(crate) fn analyze(func: Func) -> AnalyzeResult {
+pub fn analyze(func: Func) -> AnalyzeResult {
     let stacksize = 10000;
     // x -> 4
     // y -> 8,

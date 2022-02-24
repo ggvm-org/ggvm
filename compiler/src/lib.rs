@@ -68,6 +68,8 @@ pub fn parse() -> impl FnOnce(&str) -> IResult<&str, Func> {
     func
 }
 
+pub use analyze::analyze;
+
 // func x() <type> { <stmts> };
 pub(crate) fn func(input: &str) -> IResult<&str, Func> {
     let (input, _) = tag("func")(input)?;
