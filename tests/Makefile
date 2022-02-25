@@ -7,15 +7,17 @@ all: $(TARG)
 $(TARG): main.a
 	go tool link main.a 
 
-main.a: main.o func_amd64.o
+main.a: main.o func_amd64.o link.o
 	go tool pack c $@ $^
-	go tool pack r /Users/krouton/.goenv/versions/1.15.8/pkg/darwin_amd64/encoding/hex.a $@
 
-main.o: main.go symabis
+main.o: main.go symabis link.o
 	go tool compile -symabis symabis -p $(PKG) $<
 
+link.o: link.go symabis
+	go tool compile -symabis symabis -p $(PKG) -p github.com/ggvm-org/pure $<
+
 func_amd64.o: func_amd64.s go_asm.h
-	go tool asm -p $(PKG) $<
+	go tool asm -p $(PKG) -p github.com/ggvm-org/pure $<
 
 func_amd64.s: go_asm.h
 

@@ -1,12 +1,32 @@
 package main
 
-import "os"
+import (
+	"math/rand"
 
-// TODO: 動的に関数名を生成してチェックできるようにする
-func run(x int) int
+	"github.com/ggvm-org/pure"
+)
+
+func run()
+
+func q() {
+	pure.Unpure()
+}
+
+func LinkP() {
+	println(rand.Intn(1000))
+}
+
+func p() {
+	LinkP()
+}
+
+func fib(n int) int {
+	return n
+}
+
+func drop(x int) {}
 
 func main() {
-	i := run(1)
-	println(i)
-	os.Exit(i)
+	run()
+	p()
 }
