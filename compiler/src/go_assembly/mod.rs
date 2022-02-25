@@ -3,6 +3,7 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
+// TODO: rename to Directives
 #[derive(Debug, PartialEq)]
 pub enum GoAssemblyKind {
     Text { package: String, name: String },
