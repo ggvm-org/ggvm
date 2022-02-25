@@ -113,20 +113,12 @@ impl fmt::Display for GoAssembly {
     }
 }
 #[cfg(test)]
-mod tests {
-    use crate::go_assembly::{AsmOperand, GoAssemblyKind, Register::*, RegisterWithOffset};
+mod insta {
+    use crate::go_assembly::{AsmOperand, Register::*, RegisterWithOffset};
     use insta::assert_display_snapshot;
 
     #[test]
-    fn insta_goassembly_kind() {
-        assert_display_snapshot!(GoAssemblyKind::Text {
-            package: "main".to_string(),
-            name: "run".to_string()
-        })
-    }
-
-    #[test]
-    fn insta_register_with_offset() {
+    fn register_with_offset() {
         assert_display_snapshot!(RegisterWithOffset {
             register: AX,
             offset: 8
@@ -138,7 +130,7 @@ mod tests {
     }
 
     #[test]
-    fn insta_asmoperand() {
+    fn asm_operand() {
         assert_display_snapshot!(AsmOperand::Ident("a".to_string()));
         assert_display_snapshot!(AsmOperand::Int(1));
         assert_display_snapshot!(AsmOperand::Register(AX));
