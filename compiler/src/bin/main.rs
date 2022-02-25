@@ -15,11 +15,15 @@ fn main() {
     file.read_to_string(&mut input).expect("idk");
     let parse = compiler::parse();
     let result = parse(&input);
-    assert!(result.is_ok());
+    if result.is_err() {
+        dbg!(&result);
+        process::exit(2);
+    }
     let (_rest, func) = result.unwrap();
     let analyze_result = compiler::analyze(func);
     dbg!(&analyze_result);
     let compile = compiler::compile();
     let go_asm = compile(analyze_result);
-    dbg!(go_asm);
+    dbg!(&go_asm);
+    println!("{go_asm}");
 }
