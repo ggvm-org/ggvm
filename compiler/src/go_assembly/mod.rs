@@ -1,6 +1,7 @@
-use std::ops::{Deref, DerefMut};
-
-use crate::Operand;
+use std::{
+    fmt,
+    ops::{Deref, DerefMut},
+};
 
 #[derive(Debug, PartialEq)]
 pub enum GoAssemblyKind {
@@ -21,14 +22,15 @@ pub enum AsmOperand {
     Register(Register),
 }
 
-impl ToString for AsmOperand {
-    fn to_string(&self) -> String {
-        match self {
+impl fmt::Display for AsmOperand {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
             AsmOperand::Ident(s) => s.clone(),
             AsmOperand::Int(n) => format!("${n}"),
             AsmOperand::RegisterWithOffset(inner) => inner.to_string(),
             AsmOperand::Register(register) => register.to_string(),
-        }
+        };
+        write!(f, "{s}")
     }
 }
 
@@ -94,5 +96,25 @@ impl Deref for GoAssembly {
 impl DerefMut for GoAssembly {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
+    }
+}
+
+impl fmt::Display for GoAssembly {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let stmts_str = self.iter().fold(String::new(), |asm_body_str, goasm| {
+            format!("{}\n{}", asm_body_str, goasm.to_string())
+        });
+        write!(f, "{stmts_str}")
+    }
+}
+#[cfg(test)]
+mod tests {
+    use crate::go_assembly::{AsmOperand, Register};
+
+    #[test]
+    fn insta_asmoperand() {
+        insta::assert_display_snapshot!(AsmOperand::Ident("a".to_string()));
+        insta::assert_display_snapshot!(AsmOperand::Int(1));
+        insta::assert_display_snapshot!(AsmOperand::Register(Register::AX));
     }
 }

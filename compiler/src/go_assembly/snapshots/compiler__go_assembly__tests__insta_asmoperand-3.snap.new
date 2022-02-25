@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/mod.rs
+assertion_line: 118
+expression: "AsmOperand::Register(Register::AX)"
+
+---
+AX
