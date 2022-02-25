@@ -1,0 +1,3 @@
+func $run() int {
+	call %randIntn
+}
