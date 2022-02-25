@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 157
+assertion_line: 189
 expression: "AsmOperand::Int(1)"
 
 ---

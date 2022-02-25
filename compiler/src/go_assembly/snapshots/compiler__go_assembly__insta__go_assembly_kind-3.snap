@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 131
+assertion_line: 163
 expression: "GoAssemblyKind::Addq(AsmOperand::Int(10000), AsmOperand::Register(SP))"
 
 ---
