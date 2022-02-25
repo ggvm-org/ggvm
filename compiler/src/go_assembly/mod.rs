@@ -143,22 +143,20 @@ mod insta {
         )
     );
 
-    #[test]
-    fn register_with_offset() {
-        assert_display_snapshot!(RegisterWithOffset {
+    insta_test!(
+        register_with_offset: RegisterWithOffset {
             register: AX,
             offset: 8
-        });
-        assert_display_snapshot!(RegisterWithOffset {
+        },
+        RegisterWithOffset {
             register: SP,
             offset: 0
-        })
-    }
+        }
+    );
 
-    #[test]
-    fn asm_operand() {
-        assert_display_snapshot!(AsmOperand::Ident("a".to_string()));
-        assert_display_snapshot!(AsmOperand::Int(1));
-        assert_display_snapshot!(AsmOperand::Register(AX));
-    }
+    insta_test!(
+        asm_operand: AsmOperand::Ident("a".to_string()),
+        AsmOperand::Int(1),
+        AsmOperand::Register(AX)
+    );
 }
