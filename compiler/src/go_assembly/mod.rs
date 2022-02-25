@@ -75,14 +75,15 @@ impl fmt::Display for Register {
     }
 }
 
-impl ToString for GoAssemblyKind {
-    fn to_string(&self) -> String {
-        match self {
-            Self::Text { package, name } => unimplemented!(),
+impl fmt::Display for GoAssemblyKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            Self::Text { package, name } => format!("TEXT	{}.{}(SB), 4, $0-0", package, name),
             Self::Subq(left, right) => unimplemented!(),
             Self::Call(AsmOperand::Ident(ident)) => format!("CALL    main.{ident}(SB)"),
             _ => unimplemented!(),
-        }
+        };
+        write!(f, "{s}")
     }
 }
 
@@ -112,8 +113,16 @@ impl fmt::Display for GoAssembly {
 }
 #[cfg(test)]
 mod tests {
-    use crate::go_assembly::{AsmOperand, Register::*, RegisterWithOffset};
+    use crate::go_assembly::{AsmOperand, GoAssemblyKind, Register::*, RegisterWithOffset};
     use insta::assert_display_snapshot;
+
+    #[test]
+    fn insta_goassembly_kind() {
+        assert_display_snapshot!(GoAssemblyKind::Text {
+            package: "main".to_string(),
+            name: "run".to_string()
+        })
+    }
 
     #[test]
     fn insta_register_with_offset() {

@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 132
+assertion_line: 141
 expression: "AsmOperand::Ident(\"a\".to_string())"
 
 ---
