@@ -81,8 +81,9 @@ impl fmt::Display for GoAssemblyKind {
         let s = match self {
             Self::Text { package, name } => format!("TEXT	{}.{}(SB), 4, $0-0", package, name),
             Self::Subq(left, right) => format!("SUBQ	{}, {}", left, right),
-            Self::Call(AsmOperand::Ident(ident)) => format!("CALL    main.{ident}(SB)"),
+            Self::Call(AsmOperand::Ident(ident)) => format!("CALL    main·{ident}(SB)"),
             Self::Addq(left, right) => format!("ADDQ	{}, {}", left, right),
+            Self::Movq(left, right) => format!("MOVQ	{}, {}", left, right),
             _ => unimplemented!(),
         };
         write!(f, "{s}")
@@ -116,7 +117,9 @@ impl fmt::Display for GoAssembly {
 
 #[cfg(test)]
 mod insta {
-    use crate::go_assembly::{AsmOperand, GoAssemblyKind, Register::*, RegisterWithOffset};
+    use crate::go_assembly::{
+        AsmOperand, GoAssembly, GoAssemblyKind, Register::*, RegisterWithOffset,
+    };
     use insta::assert_display_snapshot;
 
     macro_rules! insta_test {
@@ -127,6 +130,35 @@ mod insta {
             }
         };
     }
+
+    insta_test!(
+        go_assembly:
+            GoAssembly(
+                vec![
+                    GoAssemblyKind::Text {
+                        package: "main".to_string(),
+                        name: "run".to_string()
+                    },
+                    GoAssemblyKind::Subq(AsmOperand::Int(10000), AsmOperand::Register(SP)),
+                    GoAssemblyKind::Movq(
+                        AsmOperand::Register(BP),
+                        AsmOperand::RegisterWithOffset(RegisterWithOffset {
+                            offset: 16,
+                            register: SP
+                        })
+                    ),
+                    GoAssemblyKind::Call(AsmOperand::Ident("rantIntn".to_string())),
+                    GoAssemblyKind::Movq(
+                        AsmOperand::RegisterWithOffset(RegisterWithOffset {
+                            offset: 16,
+                            register: SP
+                        }),
+                        AsmOperand::Register(BP),
+                    ),
+                    GoAssemblyKind::Addq(AsmOperand::Int(10000), AsmOperand::Register(SP))
+                ],
+            )
+    );
 
     insta_test!(
         go_assembly_kind: GoAssemblyKind::Text {
