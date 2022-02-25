@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 153
+assertion_line: 157
 expression: "AsmOperand::Register(AX)"
 
 ---
