@@ -80,7 +80,7 @@ impl fmt::Display for GoAssemblyKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
             Self::Text { package, name } => format!("TEXT	{}.{}(SB), 4, $0-0", package, name),
-            Self::Subq(left, right) => unimplemented!(),
+            Self::Subq(left, right) => format!("SUBQ	{}, {}", left, right),
             Self::Call(AsmOperand::Ident(ident)) => format!("CALL    main.{ident}(SB)"),
             _ => unimplemented!(),
         };
@@ -114,8 +114,20 @@ impl fmt::Display for GoAssembly {
 }
 #[cfg(test)]
 mod insta {
-    use crate::go_assembly::{AsmOperand, Register::*, RegisterWithOffset};
+    use crate::go_assembly::{AsmOperand, GoAssemblyKind, Register::*, RegisterWithOffset};
     use insta::assert_display_snapshot;
+
+    #[test]
+    fn go_assembly_kind() {
+        assert_display_snapshot!(GoAssemblyKind::Text {
+            package: "main".to_string(),
+            name: "run".to_string()
+        });
+        assert_display_snapshot!(GoAssemblyKind::Subq(
+            AsmOperand::Int(10000),
+            AsmOperand::Register(SP)
+        ))
+    }
 
     #[test]
     fn register_with_offset() {

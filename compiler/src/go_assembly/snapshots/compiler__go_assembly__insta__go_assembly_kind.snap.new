@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/mod.rs
+assertion_line: 122
+expression: "GoAssemblyKind::Text{package: \"main\".to_string(), name: \"run\".to_string(),}"
+
+---
+TEXT	main.run(SB), 4, $0-0
