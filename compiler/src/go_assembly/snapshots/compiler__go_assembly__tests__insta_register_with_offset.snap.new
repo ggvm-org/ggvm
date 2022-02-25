@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/mod.rs
+assertion_line: 120
+expression: "RegisterWithOffset{register: AX, offset: 8,}"
+
+---
+8(AX)

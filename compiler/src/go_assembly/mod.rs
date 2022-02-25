@@ -40,15 +40,18 @@ pub struct RegisterWithOffset {
     pub(crate) register: Register,
 }
 
-impl ToString for RegisterWithOffset {
-    fn to_string(&self) -> String {
-        let offset = self.offset;
-        let register = self.register;
-        if offset == 0 {
-            register.to_string()
-        } else {
-            "{offset}(register)".to_string()
-        }
+impl fmt::Display for RegisterWithOffset {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = {
+            let offset = self.offset;
+            let register = self.register;
+            if offset == 0 {
+                register.to_string()
+            } else {
+                format!("{offset}({register})")
+            }
+        };
+        write!(f, "{s}")
     }
 }
 
@@ -60,15 +63,15 @@ pub enum Register {
     BP,
 }
 
-impl ToString for Register {
-    fn to_string(&self) -> String {
-        match self {
+impl fmt::Display for Register {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
             &Self::AX => "AX",
             &Self::CX => "CX",
             &Self::SP => "SP",
             &Self::BP => "BP",
-        }
-        .to_string()
+        };
+        write!(f, "{s}")
     }
 }
 
@@ -109,12 +112,25 @@ impl fmt::Display for GoAssembly {
 }
 #[cfg(test)]
 mod tests {
-    use crate::go_assembly::{AsmOperand, Register};
+    use crate::go_assembly::{AsmOperand, Register::*, RegisterWithOffset};
+    use insta::assert_display_snapshot;
+
+    #[test]
+    fn insta_register_with_offset() {
+        assert_display_snapshot!(RegisterWithOffset {
+            register: AX,
+            offset: 8
+        });
+        assert_display_snapshot!(RegisterWithOffset {
+            register: SP,
+            offset: 0
+        })
+    }
 
     #[test]
     fn insta_asmoperand() {
-        insta::assert_display_snapshot!(AsmOperand::Ident("a".to_string()));
-        insta::assert_display_snapshot!(AsmOperand::Int(1));
-        insta::assert_display_snapshot!(AsmOperand::Register(Register::AX));
+        assert_display_snapshot!(AsmOperand::Ident("a".to_string()));
+        assert_display_snapshot!(AsmOperand::Int(1));
+        assert_display_snapshot!(AsmOperand::Register(AX));
     }
 }

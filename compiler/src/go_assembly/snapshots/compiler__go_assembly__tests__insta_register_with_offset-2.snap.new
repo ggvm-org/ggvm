@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/mod.rs
+assertion_line: 124
+expression: "RegisterWithOffset{register: SP, offset: 0,}"
+
+---
+SP
