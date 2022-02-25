@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 122
+assertion_line: 123
 expression: "GoAssemblyKind::Text{package: \"main\".to_string(), name: \"run\".to_string(),}"
 
 ---

@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 134
+assertion_line: 139
 expression: "RegisterWithOffset{register: AX, offset: 8,}"
 
 ---

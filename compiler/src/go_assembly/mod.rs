@@ -82,6 +82,7 @@ impl fmt::Display for GoAssemblyKind {
             Self::Text { package, name } => format!("TEXT	{}.{}(SB), 4, $0-0", package, name),
             Self::Subq(left, right) => format!("SUBQ	{}, {}", left, right),
             Self::Call(AsmOperand::Ident(ident)) => format!("CALL    main.{ident}(SB)"),
+            Self::Addq(left, right) => format!("ADDQ	{}, {}", left, right),
             _ => unimplemented!(),
         };
         write!(f, "{s}")
@@ -124,6 +125,10 @@ mod insta {
             name: "run".to_string()
         });
         assert_display_snapshot!(GoAssemblyKind::Subq(
+            AsmOperand::Int(10000),
+            AsmOperand::Register(SP)
+        ));
+        assert_display_snapshot!(GoAssemblyKind::Addq(
             AsmOperand::Int(10000),
             AsmOperand::Register(SP)
         ))
