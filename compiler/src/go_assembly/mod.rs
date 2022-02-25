@@ -113,26 +113,35 @@ impl fmt::Display for GoAssembly {
         write!(f, "{stmts_str}")
     }
 }
+
 #[cfg(test)]
 mod insta {
     use crate::go_assembly::{AsmOperand, GoAssemblyKind, Register::*, RegisterWithOffset};
     use insta::assert_display_snapshot;
 
-    #[test]
-    fn go_assembly_kind() {
-        assert_display_snapshot!(GoAssemblyKind::Text {
+    macro_rules! insta_test {
+        ($testname:ident: $($testcases:expr),+) => {
+            #[test]
+            fn $testname() {
+                $(assert_display_snapshot!($testcases);)+
+            }
+        };
+    }
+
+    insta_test!(
+        go_assembly_kind: GoAssemblyKind::Text {
             package: "main".to_string(),
             name: "run".to_string()
-        });
-        assert_display_snapshot!(GoAssemblyKind::Subq(
+        },
+        GoAssemblyKind::Subq(
             AsmOperand::Int(10000),
             AsmOperand::Register(SP)
-        ));
-        assert_display_snapshot!(GoAssemblyKind::Addq(
+        ),
+        GoAssemblyKind::Addq(
             AsmOperand::Int(10000),
             AsmOperand::Register(SP)
-        ))
-    }
+        )
+    );
 
     #[test]
     fn register_with_offset() {
