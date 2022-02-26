@@ -51,14 +51,6 @@ impl_from_operand!(String => Ident);
 impl_from_operand!(RegisterWithOffset => RegisterWithOffset);
 impl_from_operand!(Register => RegisterWithOffset);
 
-// macro_rules! impl_from_operand_int {
-//     ($($from_ty:ty,)+) => {
-//         $(impl_from_operand!($from_ty => Int);)+
-//     };
-// }
-
-// impl_from_operand_int!(i64);
-
 #[macro_export]
 macro_rules! operand {
     ($offset:expr => $register_variant:ident) => {
@@ -66,7 +58,10 @@ macro_rules! operand {
     };
     ($register:ident) => {
        Operand::RegisterWithOffset(crate::register_with_offset!($register))
-    }
+    };
+    ($expr:expr) => {
+        Operand::from($expr)
+    };
 }
 
 #[cfg(test)]
@@ -83,5 +78,5 @@ mod snapshots {
         };
     }
 
-    insta_test!(operand: operand!(AX), operand!(16=>SP));
+    insta_test!(operand: operand!(AX), operand!(16=>SP), operand!(1));
 }
