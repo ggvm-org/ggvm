@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/register_with_offset/mod.rs
-assertion_line: 56
+assertion_line: 58
 expression: register_with_offset!(AX)
 
 ---

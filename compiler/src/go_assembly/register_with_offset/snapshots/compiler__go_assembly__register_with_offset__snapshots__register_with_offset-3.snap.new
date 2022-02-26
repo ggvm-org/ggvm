@@ -1,7 +1,7 @@
 ---
 source: compiler/src/go_assembly/register_with_offset/mod.rs
 assertion_line: 58
-expression: register_with_offset!(16 => SP)
+expression: register_with_offset!(TEST_OFFSET => SP)
 
 ---
-16(SP)
+10(SP)

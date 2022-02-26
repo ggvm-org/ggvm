@@ -53,9 +53,12 @@ mod snapshots {
         };
     }
 
+    const TEST_OFFSET: usize = 10;
+
     insta_test!(
         register_with_offset: register_with_offset!(AX),
-        register_with_offset!(16=>SP)
+        register_with_offset!(16=>SP),
+        register_with_offset!(TEST_OFFSET=>SP)
     );
 }
 
