@@ -40,6 +40,9 @@ macro_rules! directive {
     (RET) => {
         Directive::Ret
     };
+    (PCDATA $left:expr, $right:expr) => {
+        PCDATA!($left, $right)
+    };
     (CALL $package:ident.$name:ident) => {
         CALL!($package.$name)
     };
@@ -51,6 +54,29 @@ macro_rules! directive {
     };
     (@$label_name:ident) => {
         Directive::Label(stringify!($label_name))
+    };
+}
+
+#[macro_export]
+macro_rules! PCDATA {
+    ($left:expr, $right:expr) => {
+        Directive::PCData(operand!($left), operand!($right))
+    };
+}
+
+#[macro_export]
+macro_rules! ADDQ {
+    ($left_op:tt, $right_op:tt) => {
+        Directive::Addq(operand!($left_op), operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_op:tt) => {
+        Directive::Addq(operand!($left_offset => $left_op), operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
+        Directive::Addq(operand!($left_offset => $left_op), operand!($right_offset => $right_op))
+    };
+    ($left_op:tt, $right_offset:tt => $right_op:tt) => {
+        Directive::Addq(operand!($left_op), operand!($right_offset => $right_op))
     };
 }
 
@@ -146,4 +172,14 @@ mod snapshots {
         JLS!(TEST_JMP_TARGET_VAR),
         JLS!(@body)
     );
+
+    insta_test!(
+        addq: ADDQ!(AX, 1),
+        ADDQ!(16=>AX, 1),
+        ADDQ!(1, 16=>AX),
+        ADDQ!(16=>AX, 16=>SP)
+    );
+
+    insta_test!(pcdata: PCDATA!(1, 2));
+    insta_test!(directive_pcdata: directive!(PCDATA 1, 2));
 }
