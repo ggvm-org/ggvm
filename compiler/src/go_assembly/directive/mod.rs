@@ -21,14 +21,15 @@ pub(crate) enum Directive {
     Cmpq(Operand, Operand),
     // PCDATA	$0, $-2
     PCData(Operand, Operand),
-    // Jls	epi
-    Jls(Operand),
+
     // epi:
     Label(String),
     // NOP
     Nop,
     // JMP body
     Jmp(JmpTarget),
+    // Jls	epi
+    Jls(JmpTarget),
 }
 
 #[macro_export]
@@ -130,5 +131,12 @@ mod snapshots {
         JMP!("epi"),
         JMP!(TEST_JMP_TARGET_VAR),
         JMP!(@body)
+    );
+
+    insta_test!(
+        jls: JLS!(33),
+        JLS!("epi"),
+        JLS!(TEST_JMP_TARGET_VAR),
+        JLS!(@body)
     );
 }
