@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/directive/mod.rs
+assertion_line: 130
+expression: directive!(CALL main.run)
+
+---
+CALL    main·run(SB)

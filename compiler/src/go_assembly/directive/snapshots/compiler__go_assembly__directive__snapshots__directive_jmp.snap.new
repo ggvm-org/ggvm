@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/directive/mod.rs
+assertion_line: 128
+expression: directive!(JMP 2)
+
+---
+JMP	2

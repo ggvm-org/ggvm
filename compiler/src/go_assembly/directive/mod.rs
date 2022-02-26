@@ -41,10 +41,13 @@ macro_rules! directive {
         Directive::Ret
     };
     (CALL $package:ident.$name:ident) => {
-        CALL!($package:ident.$name:ident)
+        CALL!($package.$name)
+    };
+    (JMP @$target:tt) => {
+        JMP!(@$target)
     };
     (JMP $target:tt) => {
-        JMP!($tt)
+        JMP!($target)
     };
     (@$label_name:ident) => {
         Directive::Label(stringify!($label_name))
@@ -121,6 +124,10 @@ mod snapshots {
             }
         };
     }
+
+    insta_test!(directive_jmp: directive!(JMP 2), directive!(JMP @body));
+
+    insta_test!(directive_call: directive!(CALL main.run));
 
     insta_test!(nop: directive!(NOP));
     insta_test!(call: CALL!(main.run));
