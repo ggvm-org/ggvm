@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/directive/mod.rs
+assertion_line: 183
+expression: "PCDATA!(1, 2)"
+
+---
+PCDATA $1, $2

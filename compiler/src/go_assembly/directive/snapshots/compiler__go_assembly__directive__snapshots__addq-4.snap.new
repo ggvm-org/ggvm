@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/directive/mod.rs
+assertion_line: 176
+expression: "ADDQ!(16 => AX, 16 => SP)"
+
+---
+ADDQ	16(AX), 16(SP)

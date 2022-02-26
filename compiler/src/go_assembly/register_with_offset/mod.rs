@@ -38,13 +38,13 @@ impl From<Register> for RegisterWithOffset {
 macro_rules! register_with_offset {
     // TODO: `=> $register_variant` to `($register_variant)`
     ($offset:expr => $register_variant:ident) => {
-        RegisterWithOffset {
+        $crate::go_assembly::register_with_offset::RegisterWithOffset {
             offset: $offset,
             register: crate::go_assembly::Register::$register_variant,
         }
     };
     ($variant:ident) => {
-        RegisterWithOffset {
+        $crate::go_assembly::register_with_offset::RegisterWithOffset {
             offset: 0,
             register: crate::go_assembly::Register::$variant,
         }

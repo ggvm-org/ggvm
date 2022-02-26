@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 130
+assertion_line: 156
 expression: directive!(CALL main.run)
 
 ---
