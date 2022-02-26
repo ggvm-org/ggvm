@@ -2,7 +2,7 @@ use std::fmt;
 
 use self::jmp_target::JmpTarget;
 
-use super::AsmOperand;
+use super::operand::Operand;
 
 #[macro_use]
 pub mod jmp_target;
@@ -10,19 +10,19 @@ pub mod jmp_target;
 #[derive(Debug, PartialEq)]
 pub(crate) enum Directive {
     Text { package: String, name: String },
-    Subq(AsmOperand, AsmOperand),
-    Leaq(AsmOperand, AsmOperand),
-    Movq(AsmOperand, AsmOperand),
+    Subq(Operand, Operand),
+    Leaq(Operand, Operand),
+    Movq(Operand, Operand),
     Call { package: String, name: String },
-    Addq(AsmOperand, AsmOperand),
+    Addq(Operand, Operand),
     Ret,
 
     // CMPQ	SP, 16(R14)
-    Cmpq(AsmOperand, AsmOperand),
+    Cmpq(Operand, Operand),
     // PCDATA	$0, $-2
-    PCData(AsmOperand, AsmOperand),
-    // JLS	epi
-    JLS(AsmOperand),
+    PCData(Operand, Operand),
+    // Jls	epi
+    Jls(Operand),
     // epi:
     Label(String),
     // NOP
@@ -60,15 +60,22 @@ macro_rules! CALL {
     };
 }
 
-#[macro_export]
-macro_rules! JMP {
-    ($target:expr) => {
-        Directive::Jmp(JmpTarget::from($target))
-    };
-    (@$label:ident) => {
-        Directive::Jmp(JmpTarget::from(stringify!($label)))
+macro_rules! define_jmp_macro {
+    ($macro_name:ident, $variant:ident) => {
+        #[macro_export]
+        macro_rules! $macro_name {
+            ($target:expr) => {
+                Directive::$variant(JmpTarget::from($target))
+            };
+            (@$label:ident) => {
+                Directive::$variant(JmpTarget::from(stringify!($label)))
+            };
+        }
     };
 }
+
+define_jmp_macro!(JMP, Jmp);
+define_jmp_macro!(JLS, Jls);
 
 impl fmt::Display for Directive {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -79,7 +86,7 @@ impl fmt::Display for Directive {
             Self::Addq(left, right) => format!("ADDQ	{}, {}", left, right),
             Self::Movq(left, right) => format!("MOVQ	{}, {}", left, right),
             Self::Cmpq(left, right) => format!("Cmpq	{}, {}", left, right),
-            Self::JLS(target) => format!("JLS	{}", target),
+            Self::Jls(target) => format!("Jls	{}", target),
             Self::PCData(left, right) => format!("PCDATA {}, {}", left, right),
             Self::Label(label_name) => format!("{}:", label_name),
             Self::Jmp(target) => format!("JMP	{}", target),
