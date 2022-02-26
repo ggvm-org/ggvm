@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 134
+assertion_line: 168
 expression: "GoAssembly(vec![GoAssemblyKind :: Text\n        { package : \"main\".to_string(), name : \"run\".to_string() },\n        GoAssemblyKind ::\n        Subq(AsmOperand :: Int(10000), AsmOperand :: Register(SP)),\n        GoAssemblyKind ::\n        Movq(AsmOperand :: Register(BP), AsmOperand ::\n        RegisterWithOffset(RegisterWithOffset\n        { offset : 16, register : SP })), GoAssemblyKind ::\n        Call(AsmOperand :: Ident(\"rantIntn\".to_string())), GoAssemblyKind ::\n        Movq(AsmOperand ::\n        RegisterWithOffset(RegisterWithOffset { offset : 16, register : SP }),\n        AsmOperand :: Register(BP),), GoAssemblyKind ::\n        Addq(AsmOperand :: Int(10000), AsmOperand :: Register(SP))])"
 
 ---

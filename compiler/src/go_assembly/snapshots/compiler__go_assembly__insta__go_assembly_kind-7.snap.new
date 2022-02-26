@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/mod.rs
+assertion_line: 197
+expression: "GoAssemblyKind::PCData(AsmOperand::Int(1), AsmOperand::Int(2))"
+
+---
+PCDATA $1, $2

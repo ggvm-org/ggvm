@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/mod.rs
+assertion_line: 197
+expression: "GoAssemblyKind::Label(\"epi\".to_string())"
+
+---
+epi:

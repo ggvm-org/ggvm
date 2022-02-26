@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/mod.rs
+assertion_line: 197
+expression: "GoAssemblyKind::Cmpq(AsmOperand::Register(SP),\n    AsmOperand::RegisterWithOffset(RegisterWithOffset{offset: 16,\n            register: R14,}))"
+
+---
+Cmpq	SP, 16(R14)
