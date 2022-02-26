@@ -1,11 +1,11 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 168
+assertion_line: 78
 expression: "GoAssembly::new_goroutine_prologue()"
 
 ---
 
-Cmpq	SP, 16(R14)
+CMPQ	SP, 16(R14)
 PCDATA $0, $-2
 JLS	epi
 body:

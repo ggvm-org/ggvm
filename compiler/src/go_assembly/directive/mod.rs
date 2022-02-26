@@ -8,7 +8,7 @@ use super::operand::Operand;
 pub mod jmp_target;
 
 #[derive(Debug, PartialEq)]
-pub(crate) enum Directive {
+pub enum Directive {
     Text { package: String, name: String },
     Subq(Operand, Operand),
     Leaq(Operand, Operand),
@@ -53,7 +53,7 @@ macro_rules! directive {
         JMP!($target)
     };
     (@$label_name:ident) => {
-        Directive::Label(stringify!($label_name))
+        Directive::Label(stringify!($label_name).to_string())
     };
 }
 
@@ -67,43 +67,106 @@ macro_rules! PCDATA {
 #[macro_export]
 macro_rules! ADDQ {
     ($left_op:tt, $right_op:tt) => {
-        Directive::Addq(operand!($left_op), operand!($right_op))
+        $crate::go_assembly::directive::Directive::Addq($crate::operand!($left_op), $crate::operand!($right_op))
     };
     ($left_offset:tt => $left_op:tt, $right_op:tt) => {
-        Directive::Addq(operand!($left_offset => $left_op), operand!($right_op))
+        $crate::go_assembly::directive::Directive::Addq($crate::operand!($left_offset => $left_op), $crate::operand!($right_op))
     };
     ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
-        Directive::Addq(operand!($left_offset => $left_op), operand!($right_offset => $right_op))
+        $crate::go_assembly::directive::Directive::Addq($crate::operand!($left_offset => $left_op), $crate::operand!($right_offset => $right_op))
     };
     ($left_op:tt, $right_offset:tt => $right_op:tt) => {
-        Directive::Addq(operand!($left_op), operand!($right_offset => $right_op))
+        $crate::go_assembly::directive::Directive::Addq($crate::operand!($left_op), $crate::operand!($right_offset => $right_op))
     };
 }
 
-macro_rules! define_binary_directive {
-    ($macro_name:ident, $variant:ident) => {
-        #[macro_export]
-        macro_rules! $macro_name {
-            ($left_op:tt, $right_op:tt) => {
-                Directive::$variant(operand!($left_op), operand!($right_op))
-            };
-            ($left_offset:tt => $left_op:tt, $right_op:tt) => {
-                Directive::$variant(operand!($left_offset => $left_op), operand!($right_op))
-            };
-            ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
-                Directive::$variant(operand!($left_offset => $left_op), operand!($right_offset => $right_op))
-            };
-            ($left_op:tt, $right_offset:tt => $right_op:tt) => {
-                Directive::$variant(operand!($left_op), operand!($right_offset => $right_op))
-            };
-        }
+#[macro_export]
+macro_rules! SUBQ {
+    ($left_op:tt, $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Subq($crate::operand!($left_op), $crate::operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Subq($crate::operand!($left_offset => $left_op), $crate::operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Subq($crate::operand!($left_offset => $left_op), $crate::operand!($right_offset => $right_op))
+    };
+    ($left_op:tt, $right_offset:tt => $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Subq($crate::operand!($left_op), $crate::operand!($right_offset => $right_op))
     };
 }
 
-define_binary_directive!(SUBQ, Subq);
-define_binary_directive!(CMPQ, Cmpq);
-define_binary_directive!(LEAQ, Leaq);
-define_binary_directive!(MOVQ, Movq);
+#[macro_export]
+macro_rules! CMPQ {
+    ($left_op:tt, $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Cmpq($crate::operand!($left_op), $crate::operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Cmpq($crate::operand!($left_offset => $left_op), $crate::operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Cmpq($crate::operand!($left_offset => $left_op), $crate::operand!($right_offset => $right_op))
+    };
+    ($left_op:tt, $right_offset:tt => $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Cmpq($crate::operand!($left_op), $crate::operand!($right_offset => $right_op))
+    };
+}
+
+#[macro_export]
+macro_rules! LEAQ {
+    ($left_op:tt, $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Leaq($crate::operand!($left_op), $crate::operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Leaq($crate::operand!($left_offset => $left_op), $crate::operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Leaq($crate::operand!($left_offset => $left_op), $crate::operand!($right_offset => $right_op))
+    };
+    ($left_op:tt, $right_offset:tt => $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Leaq($crate::operand!($left_op), $crate::operand!($right_offset => $right_op))
+    };
+}
+
+#[macro_export]
+macro_rules! MOVQ {
+    ($left_op:tt, $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Movq($crate::operand!($left_op), $crate::operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Movq($crate::operand!($left_offset => $left_op), $crate::operand!($right_op))
+    };
+    ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Movq($crate::operand!($left_offset => $left_op), $crate::operand!($right_offset => $right_op))
+    };
+    ($left_op:tt, $right_offset:tt => $right_op:tt) => {
+        $crate::go_assembly::directive::Directive::Movq($crate::operand!($left_op), $crate::operand!($right_offset => $right_op))
+    };
+}
+// macro_rules! define_binary_directive {
+//     ($macro_name:ident, $variant:ident) => {
+//         #[macro_export]
+//         macro_rules! $macro_name {
+//             ($left_op:tt, $right_op:tt) => {
+//                 $crate::go_assembly::directive::Directive::$variant($crate::operand!($left_op), $crate::operand!($right_op))
+//             };
+//             ($left_offset:tt => $left_op:tt, $right_op:tt) => {
+//                 $crate::go_assembly::directive::Directive::$variant($crate::operand!($left_offset => $left_op), $crate::operand!($right_op))
+//             };
+//             ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
+//                 $crate::go_assembly::directive::Directive::$variant($crate::operand!($left_offset => $left_op), $crate::operand!($right_offset => $right_op))
+//             };
+//             ($left_op:tt, $right_offset:tt => $right_op:tt) => {
+//                 $crate::go_assembly::directive::Directive::$variant($crate::operand!($left_op), $crate::operand!($right_offset => $right_op))
+//             };
+//         }
+//     };
+// }
+
+// define_binary_directive!(SUBQ, Subq);
+// define_binary_directive!(CMPQ, Cmpq);
+// define_binary_directive!(LEAQ, Leaq);
+// define_binary_directive!(MOVQ, Movq);
 
 #[macro_export]
 macro_rules! CALL {
@@ -123,7 +186,9 @@ macro_rules! define_jmp_macro {
                 Directive::$variant(JmpTarget::from($target))
             };
             (@$label:ident) => {
-                Directive::$variant(JmpTarget::from(stringify!($label)))
+                Directive::$variant($crate::go_assembly::directive::jmp_target::JmpTarget::from(
+                    stringify!($label),
+                ))
             };
         }
     };
@@ -140,8 +205,8 @@ impl fmt::Display for Directive {
             Self::Call { package, name } => format!("CALL    {package}·{name}(SB)"),
             Self::Addq(left, right) => format!("ADDQ	{}, {}", left, right),
             Self::Movq(left, right) => format!("MOVQ	{}, {}", left, right),
-            Self::Cmpq(left, right) => format!("Cmpq	{}, {}", left, right),
-            Self::Jls(target) => format!("Jls	{}", target),
+            Self::Cmpq(left, right) => format!("CMPQ	{}, {}", left, right),
+            Self::Jls(target) => format!("JLS	{}", target),
             Self::PCData(left, right) => format!("PCDATA {}, {}", left, right),
             Self::Label(label_name) => format!("{}:", label_name),
             Self::Jmp(target) => format!("JMP	{}", target),

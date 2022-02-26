@@ -1,5 +1,5 @@
 #[derive(Debug, PartialEq)]
-pub(crate) enum JmpTarget {
+pub enum JmpTarget {
     Addr(i64),
     Label(String),
 }
