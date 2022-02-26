@@ -1,6 +1,11 @@
 use std::fmt;
 
+use self::jmp_target::JmpTarget;
+
 use super::AsmOperand;
+
+#[macro_use]
+pub mod jmp_target;
 
 #[derive(Debug, PartialEq)]
 pub(crate) enum Directive {
@@ -25,35 +30,6 @@ pub(crate) enum Directive {
     // JMP body
     Jmp(JmpTarget),
 }
-
-#[derive(Debug, PartialEq)]
-pub(crate) enum JmpTarget {
-    Addr(i64),
-    Label(String),
-}
-
-macro_rules! impl_from_jmp {
-    ($from_ty:ty => Label) => {
-        impl From<$from_ty> for JmpTarget {
-            fn from(v: $from_ty) -> Self {
-                Self::Label(v.to_string())
-            }
-        }
-    };
-    ($from_ty:ty => Addr) => {
-        impl From<$from_ty> for JmpTarget {
-            fn from(v: $from_ty) -> Self {
-                Self::Addr(i64::from(v))
-            }
-        }
-    };
-}
-
-impl_from_jmp!(&str => Label);
-impl_from_jmp!(String => Label);
-impl_from_jmp!(u8 => Addr);
-
-// impl From<i64> for JmpTarget {}
 
 #[macro_export]
 macro_rules! directive {
