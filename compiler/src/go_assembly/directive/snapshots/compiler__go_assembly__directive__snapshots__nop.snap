@@ -1,7 +1,7 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 142
-expression: JMP!(33)
+assertion_line: 117
+expression: directive!(NOP)
 
 ---
-JMP	33
+NOP

@@ -1,6 +1,8 @@
 use std::fmt;
 
-use super::register::Register;
+pub mod register;
+
+use register::Register;
 
 #[derive(Debug, PartialEq)]
 pub struct RegisterWithOffset {
@@ -23,19 +25,28 @@ impl fmt::Display for RegisterWithOffset {
     }
 }
 
+impl From<Register> for RegisterWithOffset {
+    fn from(register: Register) -> Self {
+        RegisterWithOffset {
+            offset: 0,
+            register,
+        }
+    }
+}
+
 #[macro_export]
 macro_rules! register_with_offset {
     // TODO: `=> $register_variant` to `($register_variant)`
     ($offset:expr => $register_variant:ident) => {
         RegisterWithOffset {
             offset: $offset,
-            register: Register::$register_variant,
+            register: crate::go_assembly::Register::$register_variant,
         }
     };
     ($variant:ident) => {
         RegisterWithOffset {
             offset: 0,
-            register: Register::$variant,
+            register: crate::go_assembly::Register::$variant,
         }
     }; // (1()2) => {};
 }

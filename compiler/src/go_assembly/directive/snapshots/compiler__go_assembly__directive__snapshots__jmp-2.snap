@@ -1,7 +1,7 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 138
-expression: directive!(NOP)
+assertion_line: 121
+expression: "JMP!(\"epi\")"
 
 ---
-NOP
+JMP	epi

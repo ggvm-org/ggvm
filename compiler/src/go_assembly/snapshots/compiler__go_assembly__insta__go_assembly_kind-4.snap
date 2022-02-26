@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 198
+assertion_line: 201
 expression: "GoAssemblyKind::JLS(AsmOperand::Int(100))"
 
 ---

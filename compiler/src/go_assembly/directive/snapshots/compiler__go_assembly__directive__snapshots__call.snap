@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 139
+assertion_line: 118
 expression: CALL!(main.run)
 
 ---

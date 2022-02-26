@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/operand/mod.rs
+assertion_line: 86
+expression: operand!(AX)
+
+---
+AX

@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 142
+assertion_line: 121
 expression: JMP!(TEST_JMP_TARGET_VAR)
 
 ---

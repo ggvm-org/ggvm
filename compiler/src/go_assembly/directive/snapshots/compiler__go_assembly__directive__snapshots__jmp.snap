@@ -1,7 +1,7 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 142
-expression: "JMP!(\"epi\")"
+assertion_line: 121
+expression: JMP!(33)
 
 ---
-JMP	epi
+JMP	33

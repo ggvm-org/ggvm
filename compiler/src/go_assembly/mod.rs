@@ -3,11 +3,12 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
-use self::{register::Register, register_with_offset::RegisterWithOffset};
+use self::register_with_offset::RegisterWithOffset;
+
+#[macro_use]
+pub mod operand;
 #[macro_use]
 mod directive;
-#[macro_use]
-pub mod register;
 #[macro_use]
 pub mod register_with_offset;
 

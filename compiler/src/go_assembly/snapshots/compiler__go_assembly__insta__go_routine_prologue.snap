@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 165
+assertion_line: 168
 expression: "GoAssembly::new_goroutine_prologue()"
 
 ---
