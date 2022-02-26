@@ -3,6 +3,8 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
+mod directive;
+
 // TODO: rename to Directives
 #[derive(Debug, PartialEq)]
 pub enum GoAssemblyKind {

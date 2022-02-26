@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/directive/mod.rs
+assertion_line: 132
+expression: directive!(NOP)
+
+---
+NOP
