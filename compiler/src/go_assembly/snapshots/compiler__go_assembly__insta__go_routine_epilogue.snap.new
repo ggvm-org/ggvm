@@ -1,0 +1,14 @@
+---
+source: compiler/src/go_assembly/mod.rs
+assertion_line: 200
+expression: "GoAssembly::new_goroutine_epilogue()"
+
+---
+
+epi:
+NOP
+PCDATA $1, $-1
+PCDATA $0, $-2
+CALL runtime·morestack_noctxt(SB)
+PCDATA $0, $-1
+JMP	body

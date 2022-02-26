@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 197
+assertion_line: 231
 expression: "GoAssemblyKind::JLS(AsmOperand::Ident(\"a\".to_string()))"
 
 ---

@@ -22,6 +22,13 @@ pub enum GoAssemblyKind {
     JLS(AsmOperand),
     // epi:
     Label(String),
+    // NOP
+    Nop,
+    // JMP body
+    Jmp(AsmOperand),
+
+    // temporary
+    CallWithPkg { package: String, name: String },
 }
 
 impl GoAssembly {
@@ -37,6 +44,28 @@ impl GoAssembly {
             GoAssemblyKind::PCData(AsmOperand::Int(0), AsmOperand::Int(-2)),
             GoAssemblyKind::JLS(AsmOperand::Ident("epi".to_string())),
             GoAssemblyKind::Label("body".to_string()),
+        ])
+    }
+
+    fn new_goroutine_epilogue() -> Self {
+        // epi:
+        // NOP
+        // PCDATA	$1, $-1
+        // PCDATA	$0, $-2
+        // CALL	runtime·morestack_noctxt(SB)
+        // PCDATA	$0, $-1
+        // JMP	body
+        Self(vec![
+            GoAssemblyKind::Label("epi".to_string()),
+            GoAssemblyKind::Nop,
+            GoAssemblyKind::PCData(AsmOperand::Int(1), AsmOperand::Int(-1)),
+            GoAssemblyKind::PCData(AsmOperand::Int(0), AsmOperand::Int(-2)),
+            GoAssemblyKind::CallWithPkg {
+                package: "runtime".to_string(),
+                name: "morestack_noctxt".to_string(),
+            },
+            GoAssemblyKind::PCData(AsmOperand::Int(0), AsmOperand::Int(-1)),
+            GoAssemblyKind::Jmp(AsmOperand::Ident("body".to_string())),
         ])
     }
 }
@@ -116,6 +145,9 @@ impl fmt::Display for GoAssemblyKind {
             Self::JLS(target) => format!("JLS	{}", target),
             Self::PCData(left, right) => format!("PCDATA {}, {}", left, right),
             Self::Label(label_name) => format!("{}:", label_name),
+            Self::Jmp(target) => format!("JMP	{}", target),
+            Self::Nop => "NOP".to_string(),
+            Self::CallWithPkg { package, name } => format!("CALL {package}·{name}(SB)"),
             _ => unimplemented!(),
         };
         write!(f, "{s}")
@@ -164,6 +196,8 @@ mod insta {
     }
 
     insta_test!(go_routine_prologue: GoAssembly::new_goroutine_prologue());
+
+    insta_test!(go_routine_epilogue: GoAssembly::new_goroutine_epilogue());
 
     insta_test!(
         go_assembly:
