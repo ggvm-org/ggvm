@@ -1,7 +1,7 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 176
-expression: "ADDQ!(AX, 1)"
+assertion_line: 179
+expression: directive!(JMP 2)
 
 ---
-ADDQ	AX, $1
+JMP	2

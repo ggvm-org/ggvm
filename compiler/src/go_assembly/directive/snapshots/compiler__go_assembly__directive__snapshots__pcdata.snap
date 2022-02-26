@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 183
+assertion_line: 208
 expression: "PCDATA!(1, 2)"
 
 ---

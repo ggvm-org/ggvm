@@ -1,0 +1,7 @@
+---
+source: compiler/src/go_assembly/directive/mod.rs
+assertion_line: 211
+expression: "SUBQ!(16 => AX, 16 => SP)"
+
+---
+SUBQ	16(AX), 16(SP)

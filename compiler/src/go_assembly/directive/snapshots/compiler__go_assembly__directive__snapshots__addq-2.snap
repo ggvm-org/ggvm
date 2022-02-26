@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 176
+assertion_line: 201
 expression: "ADDQ!(16 => AX, 1)"
 
 ---

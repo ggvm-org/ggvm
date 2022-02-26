@@ -80,6 +80,31 @@ macro_rules! ADDQ {
     };
 }
 
+macro_rules! define_binary_directive {
+    ($macro_name:ident, $variant:ident) => {
+        #[macro_export]
+        macro_rules! $macro_name {
+            ($left_op:tt, $right_op:tt) => {
+                Directive::$variant(operand!($left_op), operand!($right_op))
+            };
+            ($left_offset:tt => $left_op:tt, $right_op:tt) => {
+                Directive::$variant(operand!($left_offset => $left_op), operand!($right_op))
+            };
+            ($left_offset:tt => $left_op:tt, $right_offset:tt => $right_op:tt) => {
+                Directive::$variant(operand!($left_offset => $left_op), operand!($right_offset => $right_op))
+            };
+            ($left_op:tt, $right_offset:tt => $right_op:tt) => {
+                Directive::$variant(operand!($left_op), operand!($right_offset => $right_op))
+            };
+        }
+    };
+}
+
+define_binary_directive!(SUBQ, Subq);
+define_binary_directive!(CMPQ, Cmpq);
+define_binary_directive!(LEAQ, Leaq);
+define_binary_directive!(MOVQ, Movq);
+
 #[macro_export]
 macro_rules! CALL {
     ($package:ident.$name:ident) => {
@@ -182,4 +207,11 @@ mod snapshots {
 
     insta_test!(pcdata: PCDATA!(1, 2));
     insta_test!(directive_pcdata: directive!(PCDATA 1, 2));
+
+    insta_test!(
+        subq: SUBQ!(AX, 1),
+        SUBQ!(16=>AX, 1),
+        SUBQ!(1, 16=>AX),
+        SUBQ!(16=>AX, 16=>SP)
+    );
 }

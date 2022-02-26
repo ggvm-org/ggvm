@@ -1,7 +1,7 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 154
-expression: directive!(JMP 2)
+assertion_line: 211
+expression: "SUBQ!(AX, 1)"
 
 ---
-JMP	2
+SUBQ	AX, $1

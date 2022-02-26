@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 184
+assertion_line: 209
 expression: "directive!(PCDATA 1, 2)"
 
 ---
