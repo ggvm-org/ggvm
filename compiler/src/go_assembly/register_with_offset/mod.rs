@@ -23,6 +23,7 @@ impl fmt::Display for RegisterWithOffset {
     }
 }
 
+#[macro_export]
 macro_rules! register_with_offset {
     // TODO: `=> $register_variant` to `($register_variant)`
     ($offset:expr => $register_variant:ident) => {

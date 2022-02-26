@@ -55,6 +55,7 @@ impl_from_jmp!(u8 => Addr);
 
 // impl From<i64> for JmpTarget {}
 
+#[macro_export]
 macro_rules! directive {
     (NOP) => {
         Directive::Nop
@@ -73,6 +74,7 @@ macro_rules! directive {
     };
 }
 
+#[macro_export]
 macro_rules! CALL {
     ($package:ident.$name:ident) => {
         Directive::Call {
@@ -82,6 +84,7 @@ macro_rules! CALL {
     };
 }
 
+#[macro_export]
 macro_rules! JMP {
     ($target:expr) => {
         Directive::Jmp(JmpTarget::from($target))

@@ -4,9 +4,11 @@ use std::{
 };
 
 use self::{register::Register, register_with_offset::RegisterWithOffset};
-
+#[macro_use]
 mod directive;
+#[macro_use]
 pub mod register;
+#[macro_use]
 pub mod register_with_offset;
 
 pub use directive::*;
