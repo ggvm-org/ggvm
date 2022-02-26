@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 233
+assertion_line: 198
 expression: "GoAssemblyKind::Cmpq(AsmOperand::Register(SP),\n    AsmOperand::RegisterWithOffset(RegisterWithOffset{offset: 16,\n            register: R14,}))"
 
 ---

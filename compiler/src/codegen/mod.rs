@@ -1,6 +1,9 @@
 use crate::{
     analyze::AnalyzeResult,
-    go_assembly::{AsmOperand, GoAssembly, GoAssemblyKind, Register, RegisterWithOffset},
+    go_assembly::{
+        register::Register, register_with_offset::RegisterWithOffset, AsmOperand, GoAssembly,
+        GoAssemblyKind,
+    },
     Func, Instruction, Operand, Statement,
 };
 

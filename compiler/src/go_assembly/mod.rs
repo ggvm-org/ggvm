@@ -3,7 +3,15 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
+use self::{register::Register, register_with_offset::RegisterWithOffset};
+
 mod directive;
+pub mod register;
+pub mod register_with_offset;
+
+pub use directive::*;
+pub use register::*;
+pub use register_with_offset::*;
 
 // TODO: rename to Directives
 #[derive(Debug, PartialEq)]
@@ -87,49 +95,6 @@ impl fmt::Display for AsmOperand {
             AsmOperand::Int(n) => format!("${n}"),
             AsmOperand::RegisterWithOffset(inner) => inner.to_string(),
             AsmOperand::Register(register) => register.to_string(),
-        };
-        write!(f, "{s}")
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct RegisterWithOffset {
-    pub(crate) offset: usize,
-    pub(crate) register: Register,
-}
-
-impl fmt::Display for RegisterWithOffset {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = {
-            let offset = self.offset;
-            let register = self.register;
-            if offset == 0 {
-                register.to_string()
-            } else {
-                format!("{offset}({register})")
-            }
-        };
-        write!(f, "{s}")
-    }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub enum Register {
-    AX,
-    CX,
-    SP,
-    BP,
-    R14,
-}
-
-impl fmt::Display for Register {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = match self {
-            &Self::AX => "AX",
-            &Self::CX => "CX",
-            &Self::SP => "SP",
-            &Self::BP => "BP",
-            &Self::R14 => "R14",
         };
         write!(f, "{s}")
     }
