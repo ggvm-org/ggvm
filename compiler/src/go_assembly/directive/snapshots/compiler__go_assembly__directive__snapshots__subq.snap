@@ -1,7 +1,0 @@
----
-source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 211
-expression: "SUBQ!(AX, 1)"
-
----
-SUBQ	AX, $1

@@ -1,7 +1,0 @@
----
-source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 259
-expression: "JLS!(\"epi\")"
-
----
-JLS	epi

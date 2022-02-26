@@ -3,16 +3,7 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
-#[macro_use]
-pub mod operand;
-#[macro_use]
-pub mod directive;
-#[macro_use]
-pub mod register_with_offset;
-
-pub use directive::*;
-pub use register::*;
-pub use register_with_offset::*;
+use plan9_asm::*;
 
 impl GoAssembly {
     fn new_goroutine_prologue() -> Self {

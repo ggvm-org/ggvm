@@ -1,9 +1,6 @@
-use crate::{
-    analyze::AnalyzeResult,
-    directive,
-    go_assembly::{Directive, GoAssembly},
-    Func, Instruction, Operand, Statement, ADDQ, CALL, MOVQ, SUBQ,
-};
+use plan9_asm::*;
+
+use crate::{analyze::AnalyzeResult, go_assembly::GoAssembly, Instruction, Operand, Statement};
 
 pub fn compile() -> impl FnOnce(AnalyzeResult) -> GoAssembly {
     compile_func
@@ -13,12 +10,10 @@ pub(crate) fn compile_func(func: AnalyzeResult) -> GoAssembly {
     let func = func.func;
     let package = "main".to_string();
     let name = func.name;
+    operand!(AX);
     let mut asm = GoAssembly(vec![
-        // TEXT    {package}.{name}(SB), ABIInternal, $24-0
         Directive::Text { package, name },
-        // SUBQ    $10000, SP
         SUBQ!(10000, SP),
-        // MOVQ    BP, 16(SP)
         MOVQ!(BP, 16=>SP),
     ]);
     let body = GoAssembly(func.stmts.into_iter().fold(vec![], |mut body, stmt| {

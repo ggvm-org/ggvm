@@ -1,7 +1,0 @@
----
-source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 179
-expression: directive!(JMP @ body)
-
----
-JMP	body

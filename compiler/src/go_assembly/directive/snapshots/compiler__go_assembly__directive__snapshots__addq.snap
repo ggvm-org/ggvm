@@ -1,7 +1,0 @@
----
-source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 201
-expression: "ADDQ!(AX, 1)"
-
----
-ADDQ	AX, $1

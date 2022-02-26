@@ -1,6 +1,6 @@
 ---
 source: compiler/src/go_assembly/mod.rs
-assertion_line: 80
+assertion_line: 71
 expression: "GoAssembly::new_goroutine_epilogue()"
 
 ---

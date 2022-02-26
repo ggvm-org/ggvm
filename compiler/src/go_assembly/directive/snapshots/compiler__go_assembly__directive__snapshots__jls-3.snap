@@ -1,7 +1,0 @@
----
-source: compiler/src/go_assembly/directive/mod.rs
-assertion_line: 259
-expression: JLS!(TEST_JMP_TARGET_VAR)
-
----
-JLS	AAAAA

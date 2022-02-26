@@ -1,7 +1,0 @@
----
-source: compiler/src/go_assembly/mod.rs
-assertion_line: 163
-expression: "GoAssemblyKind::Subq(AsmOperand::Int(10000), AsmOperand::Register(SP))"
-
----
-SUBQ	$10000, SP
