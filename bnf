@@ -1,10 +1,17 @@
 <Program> := <Func>
-<Func> := func <FunctionName>() int { <Statement> }
-<Statement> := <CallStatement>
-<CallStatement> := call <Callee>
-
+<Func> := func <FunctionName>() <Type> { <Statement> }
+<Statement> := <LocalStatement> | <InstructionStatement>
+<LocalStatement> := local <LocalIdent> <AddInstruction>
+<InstructionStatement> := <AddInstruction> | <RetInstruction> | <CallInstruction>
+<AddInstruction> := add <Type> <Operand> , <Operand>
+<CallInstruction> := call <Callee>
+<RetInstruction> := ret <Type> <Operand>
+<Type> := int
+<Operand> := <Var>
+<Var> := %<Ident>
 <FunctionName> := $<Ident>
-<Callee> := %<Ident>
+<Callee> := <LocalIdent>
+<LocalIdent> := %<Ident>
 <Ident> := <Alpha>(<AlphaOrNumeric>)*
 <AlphaOrNumeric> := <Alpha> | <Numeric>
 <Alpha> := 'A' ... 'Z'
