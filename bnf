@@ -1,0 +1,12 @@
+<Program> := <Func>
+<Func> := func <FunctionName>() int { <Statement> }
+<Statement> := <CallStatement>
+<CallStatement> := call <Callee>
+
+<FunctionName> := $<Ident>
+<Callee> := %<Ident>
+<Ident> := <Alpha>(<AlphaOrNumeric>)*
+<AlphaOrNumeric> := <Alpha> | <Numeric>
+<Alpha> := 'A' ... 'Z'
+<Numeric> := '1' ... '9'
+
