@@ -16,15 +16,15 @@ impl GoAssembly {
     }
 
     fn new_goroutine_epilogue() -> Self {
-        Self(vec![
-            directive!(@epi),
-            directive!(NOP),
-            PCDATA!(1, 2),
-            PCDATA!(0, -2),
-            CALL!(runtime.morestack_noctxt),
-            PCDATA!(0, -1),
-            JMP!(@body),
-        ])
+        Self(directives!(
+            @epi:
+            NOP;
+            PCDATA #1, #2;
+            PCDATA #0, #-2;
+            CALL runtime.morestack_noctxt;
+            PCDATA #0, #-1;
+            JMP @body;
+        ))
     }
 }
 #[derive(Debug)]
