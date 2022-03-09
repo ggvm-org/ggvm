@@ -52,6 +52,14 @@ impl fmt::Display for GoAssembly {
     }
 }
 
+impl std::ops::Add for GoAssembly {
+    type Output = Self;
+    fn add(mut self, rhs: Self) -> Self::Output {
+        self.0.extend(rhs.0);
+        self
+    }
+}
+
 #[cfg(test)]
 mod insta {
     use crate::go_assembly::GoAssembly;
