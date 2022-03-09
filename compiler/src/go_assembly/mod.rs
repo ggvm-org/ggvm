@@ -7,12 +7,12 @@ use plan9_asm::*;
 
 impl GoAssembly {
     fn new_goroutine_prologue() -> Self {
-        Self(vec![
-            CMPQ!(SP, 16=>R14),
-            PCDATA!(0, -2),
-            JLS!(@epi),
-            directive!(@body),
-        ])
+        Self(directives!(
+            CMPQ [SP], [16(R14)];
+            PCDATA #0, #-2;
+            JLS @epi;
+            @body:
+        ))
     }
 
     fn new_goroutine_epilogue() -> Self {
