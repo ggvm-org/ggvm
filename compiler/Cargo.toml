@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 nom = "7.0.0"
-plan9_asm = "0.3.0"
+plan9_asm = "0.4.0"
 
 [dev-dependencies]
 insta = "1.12.0"
