@@ -10,23 +10,21 @@ pub(crate) fn compile_func(func: AnalyzeResult) -> GoAssembly {
     let func = func.func;
     let package = "main".to_string();
     let name = func.name;
-    let mut asm = GoAssembly(directives!(
+    let asm = GoAssembly(directives!(
         TEXT main.run;
         SUBQ [10000], [SP];
         MOVQ [BP], [16(SP)];
     ));
-    let body = GoAssembly(func.stmts.into_iter().fold(vec![], |mut body, stmt| {
-        body.append(&mut compile_stmt(stmt).0);
-        body
-    }));
+    let body = func
+        .stmts
+        .into_iter()
+        .fold(GoAssembly(vec![]), |body, stmt| body + compile_stmt(stmt));
 
     let epilogue = GoAssembly(directives!(
         MOVQ [16(SP)], [BP];
         ADDQ [10000], [SP];
     ));
-    asm.extend(body.0);
-    asm.extend(epilogue.0);
-    asm
+    asm + body + epilogue
 }
 
 pub(crate) fn compile_stmt(stmt: super::Statement) -> GoAssembly {
